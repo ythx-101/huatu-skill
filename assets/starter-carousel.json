@@ -1,0 +1,160 @@
+{
+  "title": "让模型先理解，再开始排版",
+  "author": "@你的名字",
+  "referenceDriven": true,
+  "designManifest": {
+    "candidateDirection": "关系显影",
+    "visualThesis": "好的排版不是套格式，而是让内容里隐藏的关系逐页显影。",
+    "readerEmotion": "先产生怀疑，再看见机制，最后获得判断方法。",
+    "semanticMetaphor": "一束光逐步照出信息之间原本看不见的连接。",
+    "motifs": ["光束", "连接点"],
+    "rhythmPlan": "封面留白，机制页变密，对比页产生冲突，结尾重新打开空间。",
+    "compositionIntent": [
+      "先让读者看见理解与格式之间的巨大尺度差。",
+      "把双层系统表现成相互协作而非相互替代。",
+      "用左右张力呈现模板与理解的根本区别。",
+      "让视线沿着步骤看见从内容到构图的转换。",
+      "用克制的证据页建立可执行的检查标准。",
+      "重新打开留白，让结论成为读者能带走的一句话。"
+    ],
+    "contrastPlan": "第三页制造最强对立，第六页用最少元素完成收束。",
+    "typeStrategy": "宋体承担观点和转折，黑体承担解释、标签与操作信息。",
+    "avoidList": ["每页相同的卡片堆叠", "整段黄色荧光笔", "只换颜色的伪方案"],
+    "whyThisVisual": "主题讨论的是模型理解，因此画面需要把关系和推理结果变成可见结构。"
+  },
+  "theme": {
+    "background": "#F4EFE4",
+    "ink": "#171714",
+    "muted": "#5F5C55",
+    "accent": "#A23F32",
+    "highlight": "#F3E58B",
+    "card": "#FBF8F0"
+  },
+  "slides": [
+    {
+      "eyebrow": "先理解，再排版",
+      "title": "格式能保底，但不能替你产生观点",
+      "density": "airy",
+      "composition": {
+        "archetype": "poster",
+        "primitives": ["scale-contrast", "whitespace"],
+        "intent": "先让读者看见理解与格式之间的巨大尺度差。"
+      },
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "规则解决的是不出错，模型理解解决的是为什么这一页应该长成这样。",
+          "emphasis": ["不出错", "为什么"]
+        },
+        {"type": "callout", "text": "同一份内容，可以因为不同理解而拥有完全不同的视觉方向。", "variant": "plain"},
+        {"type": "chips", "items": ["语义", "节奏", "构图", "判断"]}
+      ],
+      "footer": "原创示例 · 01"
+    },
+    {
+      "eyebrow": "双层系统",
+      "title": "护栏负责安全，理解负责方向",
+      "density": "normal",
+      "composition": {
+        "archetype": "diagram",
+        "primitives": ["flow", "annotation"],
+        "intent": "把双层系统表现成相互协作而非相互替代。"
+      },
+      "blocks": [
+        {
+          "type": "compare",
+          "items": [
+            {"title": "规则护栏", "subtitle": "不让页面失控", "items": ["可读性", "安全区", "对比度"]},
+            {"title": "模型理解", "subtitle": "决定页面为何成立", "items": ["视觉命题", "语义隐喻", "情绪节奏"]}
+          ]
+        },
+        {"type": "chips", "items": ["底线", "方向", "共同工作"]},
+        {"type": "callout", "text": "约束是地板，不是天花板。", "variant": "dark"}
+      ]
+    },
+    {
+      "eyebrow": "拒绝模板疲劳",
+      "title": "真正的变化，不是把红色换成蓝色",
+      "density": "normal",
+      "composition": {
+        "archetype": "split",
+        "primitives": ["alignment-break", "framing"],
+        "intent": "用左右张力呈现模板与理解的根本区别。"
+      },
+      "blocks": [
+        {
+          "type": "compare",
+          "items": [
+            {"title": "伪变化", "subtitle": "只改外观参数", "items": ["换配色", "换圆角", "换字体"]},
+            {"title": "真方向", "subtitle": "先改变内容解释", "items": ["换视觉命题", "换阅读路径", "换构图关系"]}
+          ]
+        },
+        {"type": "paragraph", "text": "候选方案必须在概念和构图上同时不同。", "emphasis": ["概念", "构图"]},
+        {"type": "callout", "text": "如果拿掉配色仍然一模一样，它就不是新方向。", "variant": "warn"}
+      ]
+    },
+    {
+      "eyebrow": "工作顺序",
+      "title": "让视觉决定有一条可检查的来路",
+      "density": "compact",
+      "composition": {
+        "archetype": "timeline",
+        "primitives": ["flow", "repetition"],
+        "intent": "让视线沿着步骤看见从内容到构图的转换。"
+      },
+      "blocks": [
+        {
+          "type": "steps",
+          "items": [
+            {"label": "01", "title": "识别核心关系", "text": "它是对比、因果、顺序，还是转变？"},
+            {"label": "02", "title": "提出视觉命题", "text": "画面准备让哪种理解发生？"},
+            {"label": "03", "title": "选择构图原语", "text": "只使用真正服务于关系的手法。"}
+          ]
+        }
+      ]
+    },
+    {
+      "eyebrow": "怎么检查",
+      "title": "模型需要解释，画面也必须拿出证据",
+      "density": "normal",
+      "composition": {
+        "archetype": "editorial",
+        "primitives": ["annotation", "whitespace"],
+        "intent": "用克制的证据页建立可执行的检查标准。"
+      },
+      "blocks": [
+        {"type": "heading", "text": "三个问题"},
+        {
+          "type": "bullets",
+          "items": [
+            "第一眼看到的东西，是否对应这一页最重要的判断？",
+            "构图变化，是否来自内容变化？",
+            "拿掉说明文字，画面还能否表达同一个关系？"
+          ]
+        },
+        {"type": "chips", "items": ["语义对应", "构图有因", "画面自证"]},
+        {"type": "callout", "text": "漂亮的理由不能替代真正成立的画面。", "variant": "accent"}
+      ]
+    },
+    {
+      "eyebrow": "最后的判断",
+      "title": "不是拒绝模板，而是拒绝没有理解的重复",
+      "density": "airy",
+      "composition": {
+        "archetype": "poster",
+        "primitives": ["framing", "whitespace"],
+        "intent": "重新打开留白，让结论成为读者能带走的一句话。"
+      },
+      "blocks": [
+        {
+          "type": "quote",
+          "text": "让规则守住底线，让模型每次重新理解内容。",
+          "source": "设计原则",
+          "variant": "light"
+        },
+        {"type": "callout", "text": "最后仍由人决定：它是否真的好看、真的有意义。", "variant": "dark"}
+      ],
+      "footer": "原创示例 · 06"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rednote Canvas"
+  short_description: "把文章与素材编排成有人文感、可验证的小红书轮播图"
+  default_prompt: "使用 $rednote-canvas 把这篇内容编排成 9 页小红书图文，并渲染后检查溢出与视觉节奏。"
