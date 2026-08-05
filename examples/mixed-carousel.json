@@ -1,5 +1,5 @@
 {
-  "title": "Rednote Canvas Demo",
+  "title": "画图 Skill Demo",
   "author": "@your-name",
   "referenceDriven": true,
   "designManifest": {
@@ -49,7 +49,7 @@
   },
   "slides": [
     {
-      "eyebrow": "REDNOTE CANVAS",
+      "eyebrow": "HUATU SKILL",
       "title": "好的图文，不是直线讲完，而是带着新证据回来",
       "density": "airy",
       "composition": {
@@ -70,7 +70,7 @@
           "height": 520
         }
       ],
-      "footer": "Rednote Canvas · 01"
+      "footer": "画图 Skill · 01"
     },
     {
       "eyebrow": "从内容到画面",
@@ -93,7 +93,7 @@
         },
         {"type": "callout", "text": "约束负责不出错，理解负责为什么这样画。", "variant": "accent"}
       ],
-      "footer": "Rednote Canvas · 02"
+      "footer": "画图 Skill · 02"
     },
     {
       "eyebrow": "视觉判断",
@@ -105,10 +105,10 @@
         "intent": "Remove most structure so the central judgment can breathe."
       },
       "blocks": [
-        {"type": "quote", "text": "如果拿掉配色，三个方案仍然一模一样，它们就不是三个方向。", "source": "Rednote Canvas 设计原则", "variant": "light"},
+        {"type": "quote", "text": "如果拿掉配色，三个方案仍然一模一样，它们就不是三个方向。", "source": "画图 Skill 设计原则", "variant": "light"},
         {"type": "chips", "items": ["语义不同", "构图不同", "节奏不同"]}
       ],
-      "footer": "Rednote Canvas · 03"
+      "footer": "画图 Skill · 03"
     },
     {
       "eyebrow": "最后一圈",
@@ -138,7 +138,7 @@
           ]
         }
       ],
-      "footer": "Rednote Canvas · 04"
+      "footer": "画图 Skill · 04"
     }
   ]
 }

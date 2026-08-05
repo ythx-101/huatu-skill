@@ -1,12 +1,12 @@
-# Rednote Canvas
+# 画图 Skill
 
 把文章、研究与灵感，变成有人文气息的小红书图文。
 
-Rednote Canvas 是一个面向 Codex / Agent 的视觉叙事 Skill。它不把内容机械塞进固定模板，而是先理解论点、关系与情绪，再决定每一页的角色、图像、留白和阅读节奏，最后输出可编辑的 JSON、HTML 预览、1080×1350 PNG 与 QA 报告。
+画图 Skill 是一个面向 Codex / Agent 的小红书视觉叙事 Skill。它不把内容机械塞进固定模板，而是先理解论点、关系与情绪，再决定每一页的角色、图像、留白和阅读节奏，最后输出可编辑的 JSON、HTML 预览、1080×1350 PNG 与 QA 报告。
 
 > Constraints keep the page safe. Interpretation makes it meaningful.
 
-![Rednote Canvas example](docs/preview/slide-01.png)
+![画图 Skill 示例](docs/preview/slide-01.png)
 
 ## 它解决什么
 
@@ -28,7 +28,7 @@ Rednote Canvas 是一个面向 Codex / Agent 的视觉叙事 Skill。它不把�
 ## 安装
 
 ```bash
-git clone https://github.com/ythx-101/rednote-canvas-skill.git ~/.codex/skills/rednote-canvas
+git clone https://github.com/ythx-101/huatu-skill.git ~/.codex/skills/huatu-skill
 ```
 
 也可以克隆到其他支持 `SKILL.md` 的 Agent skills 目录。
@@ -38,7 +38,7 @@ git clone https://github.com/ythx-101/rednote-canvas-skill.git ~/.codex/skills/r
 直接说：
 
 ```text
-使用 $rednote-canvas，把这篇文章做成 8 页小红书图文。
+使用 $huatu-skill，把这篇文章做成 8 页小红书图文。
 先提出三种真正不同的视觉方向，选择后再渲染；加入有语义作用的图像，最后检查每一页和整组节奏。
 ```
 

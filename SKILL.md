@@ -1,9 +1,9 @@
 ---
-name: rednote-canvas
+name: huatu-skill
 description: Turn articles, research, notes, data, or existing drafts into clear Xiaohongshu carousel storyboards and 1080×1350 image slides. Use when Codex needs to create, restructure, critique, or visually optimize 小红书图文、小红书轮播图、信息卡片、知识型笔记、研究型长图, including converting long-form content into 6–10 slides, improving an existing slide set, rendering local PNGs, or checking typography, density, hierarchy, overflow, and factual/source presentation.
 ---
 
-# Rednote Canvas
+# 画图 Skill
 
 Build a coherent carousel, not a collection of decorated paragraphs. Treat model interpretation, information architecture, visual hierarchy, deterministic rendering, and visual QA as one workflow. Constraints prevent accidents; a content-specific visual thesis creates meaning.
 
