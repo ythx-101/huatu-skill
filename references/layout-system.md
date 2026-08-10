@@ -13,32 +13,44 @@ Use this reference when styling or reviewing a deck. These values protect legibi
 
 | Role | Default size | Guidance |
 | --- | ---: | --- |
-| Main title | 58–68 px | 1–3 lines, strong serif, 1.12–1.22 line height |
-| Section heading | 36–42 px | Short label with a small rule or star marker |
-| Body | 29–34 px | 1.5–1.7 line height; shorten before shrinking |
+| Main title | 58–68 px | 1–3 lines, serif, weight 500, 1.1–1.3 line height |
+| Section heading | 36–42 px | Serif, weight 500, short label with a small brand bar or rule |
+| Body | 29–34 px | Serif-led, 1.5–1.6 line height; shorten before shrinking |
 | Table/card text | 24–29 px | Use compact density only for structured data |
 | Source/footnote | 20–24 px | Maintain contrast; do not hide weak sourcing |
-| Metric | 42–54 px | Accent color, one value per visual cell |
+| Metric | 42–54 px | Accent (墨蓝) color, weight 500, one value per visual cell |
 
 Preferred Chinese display stack for claims and display moments:
 
-`Songti SC, STSong, Noto Serif CJK SC, Source Han Serif SC, serif`
+`TsangerJinKai02, Source Han Serif SC, Source Han Serif CN, Noto Serif CJK SC, Noto Serif SC, Songti SC, STSong, Georgia, serif`
 
-Preferred body and label stack:
+Preferred body stack: same serif stack (`--sans` equals `--serif`, Kami single-serif page).
 
-`PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, sans-serif`
+Preferred mono stack (page numbers, eyebrows, step labels, commands — must include CJK fallback):
+
+`JetBrains Mono, SF Mono, Fira Code, Consolas, Monaco, Source Han Serif SC, Songti SC, monospace`
+
+### Kami 排版模式（默认）
+
+- 衬线标题层级：层级靠字号与留白，不靠加粗/多色；标题与主张默认 `font-weight: 500`（禁止衬线 700/800 伪粗）。
+- 行高：标题 **1.1–1.3**；密集块 **1.4–1.45**；阅读正文 **1.5–1.55**（轮播容差 ±0.05，不得回到无规范的 1.7）。
+- 字距：中文正文 0.3pt（约 0.012em@33px）；英文 body 0；tracking 只给短标签/overline/eyebrow。
+- 章节标记：小号墨蓝短条或发丝规则 + eyebrow 文字，禁止星星/emoji 装饰图标。
+- 引文：左规则或发丝框，**不斜体**。
+- 强调 ≤ 5% 版面：墨蓝只点睛（数字/短标签/一条规则/CTA）。
 
 ## Color roles
 
-- Paper: `#F4EFE4`
-- Ink: `#171714`
-- Muted ink: `#5F5C55`
-- Accent: `#A23F32`
-- Highlight: `#F3E58B`
-- Card: `#FBF8F0`
-- Rule: `#25221E`
+- Paper (parchment): `#F5F4ED`
+- Ink (near-black): `#141413`
+- Muted ink (stone): `#6B6A64`
+- Accent (brand / 墨蓝): `#1B365D`
+- Highlight (brand-tint): `#EEF2F7`
+- Card (ivory): `#FAF9F5`
+- Rule / border: `#E8E6DC` / `#E5E3D8`
+- Warn 例外（暖色唯一豁免）: 底 `#F0E0D8` / 字 `#8B4513`
 
-Allow brand overrides while preserving contrast. Use accent red primarily for numbers and tiny labels. Use yellow as a text marker, not as a large background wash.
+Allow brand overrides while preserving contrast. Kami 默认：墨蓝用于数字/短标签/左规则/CTA；高亮用浅墨蓝 tint（`#EEF2F7`）做文字标记，不作为大面积 wash；全部灰阶保持暖调，禁止冷灰作默认。
 
 ## Component selection
 

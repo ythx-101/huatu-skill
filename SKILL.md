@@ -14,7 +14,7 @@ Build a coherent carousel, not a collection of decorated paragraphs. Treat model
 - For existing images, inspect every image first. Diagnose hierarchy, spacing, contrast, consistency, clipping, and sequence before rebuilding.
 - For a critique-only request, stop after the annotated diagnosis and prioritized fixes. Do not render unless requested.
 
-Read [references/content-blueprints.md](references/content-blueprints.md) when deciding the story sequence. For reference-driven or visually ambitious work, read [references/model-interpretation.md](references/model-interpretation.md) and write the design manifest before styling. When photographs, illustrations, collage, expressive objects, or material texture could carry meaning, also read [references/image-led-design.md](references/image-led-design.md). Read [references/design-contract.md](references/design-contract.md), [references/layout-system.md](references/layout-system.md), and [references/visual-qa-rubric.md](references/visual-qa-rubric.md) before choosing styles or doing visual QA. Read [references/spec-format.md](references/spec-format.md) before writing a render spec.
+Read [references/content-blueprints.md](references/content-blueprints.md) when deciding the story sequence. For reference-driven or visually ambitious work, read [references/model-interpretation.md](references/model-interpretation.md) and write the design manifest before styling. When photographs, illustrations, collage, expressive objects, or material texture could carry meaning, also read [references/image-led-design.md](references/image-led-design.md). Read [references/kami-design.md](references/kami-design.md) (默认主题 v2.0 法则与 tokens), [references/design-contract.md](references/design-contract.md), [references/layout-system.md](references/layout-system.md), and [references/visual-qa-rubric.md](references/visual-qa-rubric.md) before choosing styles or doing visual QA. Read [references/spec-format.md](references/spec-format.md) before writing a render spec.
 
 ## 1. Establish the content contract
 
@@ -78,7 +78,9 @@ If comparison reports `distinct: false`, revise the concepts or compositions bef
 
 ## 4. Apply a bounded visual system
 
-Use a 1080×1350 canvas unless the user specifies another target. Default to the bundled editorial theme: warm paper background, near-black text, restrained brick-red accents, pale-yellow highlights, Chinese serif display type, and simple sans-serif labels.
+Use a 1080×1350 canvas unless the user specifies another target. **Default theme is Kami (v2.0)**: warm parchment canvas, ink-blue accent, warm-gray text scale, serif-led hierarchy (weight 500, no pseudo-bold), hairline borders, whisper-only shadows, no default italics, no yellow marker wash. Full rules, tokens, and anti-patterns live in `references/kami-design.md`. The old brick-red / pale-yellow default is retired.
+
+When to keep Kami: the default — especially when the user wants 高级感 / 文档感 / 克制 / 正式 / 专业. When to override the theme explicitly: the user asks for high-saturation, playful, or "小红书爆款" visual energy; then provide a custom `theme` in the spec, never by silently reverting the defaults.
 
 Keep these constraints as guardrails, not a fixed template:
 

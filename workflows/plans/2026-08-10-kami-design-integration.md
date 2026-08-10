@@ -1,7 +1,7 @@
 # 计划：huatu-skill 融合 Kami 设计系统（迭代 v2.0）
 
 **日期**: 2026-08-10
-**状态**: pending（待人类批准）
+**状态**: implemented（2026-08-11 已实施并提交 v2.0）
 **任务定级**: medium（skill 文档 + 渲染系统改进，有回归测试）
 **仓库**: ~/.codex/skills/huatu-skill（已 git init）
 

@@ -60,12 +60,12 @@ def interpreted_spec(slide_count: int = 2) -> dict:
         "author": "@test",
         "referenceDriven": True,
         "theme": {
-            "background": "#F4EFE4",
-            "ink": "#171714",
-            "muted": "#5F5C55",
-            "accent": "#A23F32",
-            "highlight": "#F3E58B",
-            "card": "#FBF8F0",
+            "background": "#F5F4ED",
+            "ink": "#141413",
+            "muted": "#6B6A64",
+            "accent": "#1B365D",
+            "highlight": "#EEF2F7",
+            "card": "#FAF9F5",
         },
         "designManifest": {
             "candidateDirection": "Metaphor-led",
@@ -85,6 +85,17 @@ def interpreted_spec(slide_count: int = 2) -> dict:
 
 
 class ValidationTests(unittest.TestCase):
+    def test_default_theme_is_kami(self) -> None:
+        expected = {
+            "background": "#F5F4ED",
+            "ink": "#141413",
+            "muted": "#6B6A64",
+            "accent": "#1B365D",
+            "highlight": "#EEF2F7",
+            "card": "#FAF9F5",
+        }
+        self.assertEqual(renderer.DEFAULT_THEME, expected)
+
     def test_legacy_spec_remains_valid(self) -> None:
         self.assertEqual(renderer.validate_spec(legacy_spec()), [])
 

@@ -52,12 +52,13 @@ ALLOWED_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".svg"}
 ALLOWED_VISUAL_MODES = {"editorial", "mixed", "image-led", "photo-diary", "object-study", "poetic-poster"}
 HEX_COLOR = re.compile(r"^#[0-9a-fA-F]{6}$")
 DEFAULT_THEME = {
-    "background": "#F4EFE4",
-    "ink": "#171714",
-    "muted": "#5F5C55",
-    "accent": "#A23F32",
-    "highlight": "#F3E58B",
-    "card": "#FBF8F0",
+    # Kami 默认主题（v2.0）：暖纸 + 墨蓝 + 暖灰 + 象牙卡，替换旧「纸红/黄荧光」默认
+    "background": "#F5F4ED",  # --parchment 暖纸画布
+    "ink": "#141413",         # --near-black 近黑正文（暖橄榄 undertone）
+    "muted": "#6B6A64",       # --stone 三级文字 / metadata
+    "accent": "#1B365D",      # --brand 墨蓝（唯一强调色，≤5% 版面）
+    "highlight": "#EEF2F7",   # --brand-tint 墨蓝×暖纸固色 tint（文字标记）
+    "card": "#FAF9F5",        # --ivory 抬升容器
 }
 MANIFEST_TEXT_FIELDS = (
     "candidateDirection",

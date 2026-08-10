@@ -11,12 +11,12 @@ The renderer accepts UTF-8 JSON. All user-visible values are plain text.
   "referenceDriven": true,
   "designManifest": {},
   "theme": {
-    "background": "#F4EFE4",
-    "ink": "#171714",
-    "muted": "#5F5C55",
-    "accent": "#A23F32",
-    "highlight": "#F3E58B",
-    "card": "#FBF8F0"
+    "background": "#F5F4ED",
+    "ink": "#141413",
+    "muted": "#6B6A64",
+    "accent": "#1B365D",
+    "highlight": "#EEF2F7",
+    "card": "#FAF9F5"
   },
   "slides": []
 }
