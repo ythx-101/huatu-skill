@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="620" viewBox="0 0 1080 620">
+  <rect width="1080" height="620" fill="#f4efe4"/>
+  <path d="M-80 435 C130 120 300 155 405 330 C490 475 610 485 700 318 C790 150 945 115 1165 358" fill="none" stroke="#a23f32" stroke-width="18" stroke-linecap="round"/>
+  <path d="M-50 472 C180 214 310 226 410 360 C510 494 637 500 734 347 C835 186 970 170 1138 332" fill="none" stroke="#d0b9a2" stroke-width="3" stroke-dasharray="8 14"/>
+  <circle cx="222" cy="202" r="15" fill="#171714"/>
+  <circle cx="420" cy="354" r="15" fill="#171714"/>
+  <circle cx="704" cy="316" r="15" fill="#171714"/>
+  <circle cx="910" cy="173" r="15" fill="#171714"/>
+  <g fill="#171714" font-family="system-ui, sans-serif" font-size="24">
+    <text x="188" y="165">观察</text>
+    <text x="385" y="405">理解</text>
+    <text x="670" y="275">构图</text>
+    <text x="875" y="135">回看</text>
+  </g>
+  <path d="M860 470 q45 -64 90 0 q45 64 90 0" fill="none" stroke="#171714" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="950" cy="470" r="8" fill="#f3e58b" stroke="#171714" stroke-width="3"/>
+</svg>

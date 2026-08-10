@@ -1,0 +1,144 @@
+{
+  "title": "画图 Skill Demo",
+  "author": "@your-name",
+  "referenceDriven": true,
+  "designManifest": {
+    "candidateDirection": "Returning thread",
+    "visualThesis": "A strong carousel returns to its central idea with new evidence on every page.",
+    "readerEmotion": "Curiosity, orientation, recognition, then confidence.",
+    "semanticMetaphor": "A red thread that bends, gathers observations, and returns changed.",
+    "motifs": ["red thread", "observation point"],
+    "rhythmPlan": "Open with an image, compress into structure, pause on one sentence, then resolve with a practical loop.",
+    "compositionIntent": [
+      "Let the returning line carry the idea before the reader begins to explain it.",
+      "Turn the visual metaphor into a clear four-stage working system.",
+      "Remove most structure so the central judgment can breathe.",
+      "Reconnect image, method, and human review in one final loop."
+    ],
+    "contrastPlan": "Use the first and third pages as visual pauses around denser explanatory pages.",
+    "typeStrategy": "Serif display claims with quiet sans-serif operational labels.",
+    "avoidList": ["identical card stacks", "decorative AI gradients", "highlighting every sentence"],
+    "whyThisVisual": "The content is about iteration, so a returning physical line expresses the mechanism more directly than another diagram.",
+    "visualMode": "mixed",
+    "materialSystem": ["warm paper", "brick-red ink"],
+    "imageCadence": "Image-led opening, structural explanation, quiet typographic pause, then mixed resolution.",
+    "assetPlan": [
+      {
+        "slide": 1,
+        "role": "hero",
+        "sourceClass": "original SVG illustration",
+        "focalPoint": "the returning red thread",
+        "textImageRelationship": "embody"
+      },
+      {
+        "slide": 4,
+        "role": "motif",
+        "sourceClass": "original SVG illustration",
+        "focalPoint": "the observation points",
+        "textImageRelationship": "resolve"
+      }
+    ]
+  },
+  "theme": {
+    "background": "#F4EFE4",
+    "ink": "#171714",
+    "muted": "#5F5C55",
+    "accent": "#A23F32",
+    "highlight": "#F3E58B",
+    "card": "#FBF8F0"
+  },
+  "slides": [
+    {
+      "eyebrow": "HUATU SKILL",
+      "title": "好的图文，不是直线讲完，而是带着新证据回来",
+      "density": "airy",
+      "composition": {
+        "archetype": "poster",
+        "primitives": ["scale-contrast", "whitespace"],
+        "intent": "Let the returning line carry the idea before the reader begins to explain it."
+      },
+      "blocks": [
+        {
+          "type": "image",
+          "src": "assets/red-thread.svg",
+          "alt": "A red thread curves through four observation points and returns",
+          "caption": "不是重复，是带着理解再次抵达。",
+          "role": "hero",
+          "fit": "contain",
+          "position": "center",
+          "treatment": "bleed",
+          "height": 520
+        }
+      ],
+      "footer": "画图 Skill · 01"
+    },
+    {
+      "eyebrow": "从内容到画面",
+      "title": "每一页都要完成一次可见的转换",
+      "density": "normal",
+      "composition": {
+        "archetype": "timeline",
+        "primitives": ["flow", "annotation"],
+        "intent": "Turn the visual metaphor into a clear four-stage working system."
+      },
+      "blocks": [
+        {
+          "type": "steps",
+          "items": [
+            {"label": "01", "title": "观察", "text": "找到真正值得讲的张力。"},
+            {"label": "02", "title": "理解", "text": "写出这一组图的视觉命题。"},
+            {"label": "03", "title": "构图", "text": "让关系决定页面，而不是模板。"},
+            {"label": "04", "title": "回看", "text": "检查画面是否真的兑现了意图。"}
+          ]
+        },
+        {"type": "callout", "text": "约束负责不出错，理解负责为什么这样画。", "variant": "accent"}
+      ],
+      "footer": "画图 Skill · 02"
+    },
+    {
+      "eyebrow": "视觉判断",
+      "title": "看不见的理解，最终必须变成看得见的差异",
+      "density": "airy",
+      "composition": {
+        "archetype": "poster",
+        "primitives": ["framing", "whitespace"],
+        "intent": "Remove most structure so the central judgment can breathe."
+      },
+      "blocks": [
+        {"type": "quote", "text": "如果拿掉配色，三个方案仍然一模一样，它们就不是三个方向。", "source": "画图 Skill 设计原则", "variant": "light"},
+        {"type": "chips", "items": ["语义不同", "构图不同", "节奏不同"]}
+      ],
+      "footer": "画图 Skill · 03"
+    },
+    {
+      "eyebrow": "最后一圈",
+      "title": "让模型生成，让规则检查，让人决定",
+      "density": "normal",
+      "composition": {
+        "archetype": "split",
+        "primitives": ["repetition", "alignment-break"],
+        "intent": "Reconnect image, method, and human review in one final loop."
+      },
+      "blocks": [
+        {
+          "type": "image",
+          "src": "assets/red-thread.svg",
+          "alt": "The red thread returns through observation points",
+          "role": "motif",
+          "fit": "cover",
+          "position": "right",
+          "treatment": "monochrome",
+          "height": 320
+        },
+        {
+          "type": "compare",
+          "items": [
+            {"title": "机器", "subtitle": "扩大探索空间", "items": ["提炼关系", "提出方向", "渲染检查"]},
+            {"title": "人", "subtitle": "保留最终判断", "items": ["是否准确", "是否动人", "是否值得发布"]}
+          ]
+        }
+      ],
+      "footer": "画图 Skill · 04"
+    }
+  ]
+}
