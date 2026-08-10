@@ -1,0 +1,890 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Xiaohongshu carousel preview</title>
+  <style>
+    :root {
+      --paper: #F4EFE4;
+      --ink: #171714;
+      --muted: #5F5C55;
+      --accent: #A23F32;
+      --highlight: #F3E58B;
+      --card: #FBF8F0;
+      --rule: #25221E;
+      --display: "Songti SC", STSong, "Noto Serif CJK SC", "Source Han Serif SC", serif;
+      --sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #d8d5cf;
+      color: var(--ink);
+      font-family: var(--display);
+      font-synthesis: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #deck {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 48px;
+      width: 1080px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .slide {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: 1080px;
+      height: 1350px;
+      padding: 82px 92px 72px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 14% 10%, rgba(255,255,255,.38), transparent 34%),
+        var(--paper);
+      color: var(--ink);
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: .14;
+      background-image: repeating-linear-gradient(0deg, rgba(36,31,24,.025) 0, rgba(36,31,24,.025) 1px, transparent 1px, transparent 4px);
+    }
+
+    .slide.interpreted .slide-content {
+      font-family: var(--sans);
+    }
+
+    .slide.interpreted .block-heading,
+    .slide.interpreted .quote-text,
+    .slide.interpreted .compare-title,
+    .slide.interpreted .step-title {
+      font-family: var(--display);
+    }
+
+    .composition-poster .slide-title {
+      max-width: 820px;
+      font-size: 78px;
+      line-height: 1.08;
+    }
+
+    .composition-poster .title-rule {
+      width: 180px;
+      height: 8px;
+      background: var(--accent);
+    }
+
+    .composition-poster .slide-content {
+      justify-content: center;
+      max-width: 820px;
+    }
+
+    .composition-split .slide-content,
+    .composition-diagram .slide-content {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-content: start;
+      column-gap: 24px;
+    }
+
+    .composition-split .block-heading,
+    .composition-split .table-wrap,
+    .composition-split .callout,
+    .composition-diagram .block-heading,
+    .composition-diagram .table-wrap,
+    .composition-diagram .callout {
+      grid-column: 1 / -1;
+    }
+
+    .composition-diagram .metric,
+    .composition-diagram .compare-card,
+    .composition-diagram .step {
+      border-radius: 22px;
+    }
+
+    .composition-timeline .steps {
+      position: relative;
+      padding-left: 36px;
+    }
+
+    .composition-timeline .steps::before {
+      content: "";
+      position: absolute;
+      top: 16px;
+      bottom: 16px;
+      left: 10px;
+      width: 3px;
+      background: var(--accent);
+    }
+
+    .composition-timeline .step {
+      position: relative;
+      border-left-color: var(--accent);
+    }
+
+    .composition-timeline .step::before {
+      content: "";
+      position: absolute;
+      top: 28px;
+      left: -34px;
+      width: 15px;
+      height: 15px;
+      border: 4px solid var(--paper);
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .primitive-framing::after {
+      content: "";
+      position: absolute;
+      inset: 42px;
+      z-index: 0;
+      border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+      border-radius: 24px;
+      pointer-events: none;
+    }
+
+    .primitive-alignment-break .slide-header {
+      width: 82%;
+      margin-left: 11%;
+    }
+
+    .primitive-annotation .eyebrow {
+      width: fit-content;
+      padding: 7px 15px;
+      border: 1.5px solid var(--accent);
+      border-radius: 999px;
+      letter-spacing: .06em;
+    }
+
+    .primitive-whitespace .slide-content {
+      max-width: 82%;
+    }
+
+    .primitive-flow .steps .step + .step,
+    .primitive-flow .compare-card + .compare-card {
+      box-shadow: -8px 8px 0 color-mix(in srgb, var(--accent) 15%, transparent);
+    }
+
+    .primitive-repetition {
+      background:
+        radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--accent) 12%, transparent) 0 42px, transparent 43px),
+        radial-gradient(circle at 82% 18%, color-mix(in srgb, var(--accent) 8%, transparent) 0 24px, transparent 25px),
+        var(--paper);
+    }
+
+    .slide-header,
+    .slide-content,
+    .slide-footer { position: relative; z-index: 1; }
+
+    .slide-header { flex: 0 0 auto; }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 34px;
+      margin-bottom: 18px;
+      font-family: var(--sans);
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: .12em;
+    }
+
+    .page-number {
+      color: var(--muted);
+      font-family: var(--display);
+      font-size: 23px;
+      font-style: italic;
+    }
+
+    .slide-title {
+      max-width: 900px;
+      margin: 0;
+      font-size: 62px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1.17;
+      text-wrap: balance;
+    }
+
+    .density-airy .slide-title { font-size: 68px; }
+    .density-compact .slide-title { font-size: 56px; line-height: 1.14; }
+
+    .title-rule {
+      width: 100%;
+      height: 3px;
+      margin: 24px 0 30px;
+      background: var(--rule);
+    }
+
+    .density-compact .title-rule { margin: 20px 0 23px; }
+
+    .slide-content {
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+      flex-direction: column;
+      gap: 24px;
+      overflow: visible;
+    }
+
+    .density-airy .slide-content { gap: 32px; justify-content: flex-start; }
+    .density-compact .slide-content { gap: 16px; }
+
+    .block {
+      flex: 0 0 auto;
+      min-width: 0;
+    }
+
+    .paragraph {
+      margin: 0;
+      font-size: 33px;
+      line-height: 1.63;
+      letter-spacing: .005em;
+    }
+
+    .density-airy .paragraph { font-size: 36px; line-height: 1.67; }
+    .density-compact .paragraph { font-size: 28px; line-height: 1.54; }
+
+    mark {
+      padding: 0 .08em;
+      color: inherit;
+      background: linear-gradient(transparent 45%, var(--highlight) 45%, var(--highlight) 92%, transparent 92%);
+    }
+
+    .block-heading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0;
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .block-heading::before {
+      content: "☆";
+      font-size: 35px;
+      font-weight: 400;
+    }
+
+    .block-heading::after {
+      content: "";
+      flex: 0 0 150px;
+      align-self: flex-end;
+      height: 1px;
+      margin-bottom: -7px;
+      margin-left: -46px;
+      background: rgba(37,34,30,.55);
+    }
+
+    .density-compact .block-heading { font-size: 32px; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(var(--columns, 3), minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .metric {
+      min-height: 156px;
+      padding: 24px 18px 19px;
+      border: 2px solid rgba(37,34,30,.85);
+      border-radius: 10px;
+      background: rgba(251,248,240,.62);
+      text-align: center;
+    }
+
+    .metric-value {
+      color: var(--accent);
+      font-size: 49px;
+      font-weight: 700;
+      line-height: 1.08;
+    }
+
+    .metric-label {
+      margin-top: 14px;
+      font-family: var(--sans);
+      font-size: 25px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .metric-source {
+      margin-top: 7px;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 20px;
+      line-height: 1.25;
+    }
+
+    .density-compact .metric { min-height: 132px; padding: 18px 14px 14px; }
+    .density-compact .metric-value { font-size: 42px; }
+    .density-compact .metric-label { font-size: 22px; }
+
+    .bullets {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .bullets li {
+      position: relative;
+      padding-left: 27px;
+      font-size: 31px;
+      line-height: 1.5;
+    }
+
+    .bullets li::before {
+      content: "•";
+      position: absolute;
+      left: 2px;
+      top: 0;
+      color: var(--accent);
+    }
+
+    .density-compact .bullets { gap: 8px; }
+    .density-compact .bullets li { font-size: 27px; line-height: 1.43; }
+
+    .quote {
+      padding: 25px 28px 22px;
+      border: 1.5px solid rgba(37,34,30,.34);
+      border-radius: 8px;
+      background: rgba(251,248,240,.7);
+    }
+
+    .quote.dark {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .quote-text {
+      margin: 0;
+      font-size: 32px;
+      font-style: italic;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    .quote-source {
+      margin-top: 13px;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 21px;
+      line-height: 1.3;
+    }
+
+    .quote.dark .quote-source { color: rgba(244,239,228,.64); }
+    .density-compact .quote { padding: 19px 23px 17px; }
+    .density-compact .quote-text { font-size: 27px; line-height: 1.4; }
+
+    .compare {
+      display: grid;
+      grid-template-columns: repeat(var(--columns, 2), minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .compare-card {
+      padding: 24px 24px 22px;
+      border: 2px solid rgba(37,34,30,.85);
+      border-radius: 10px;
+      background: rgba(251,248,240,.58);
+    }
+
+    .compare-title {
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .compare-subtitle {
+      margin-top: 7px;
+      color: var(--accent);
+      font-family: var(--sans);
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .compare-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .compare-list li {
+      padding-top: 7px;
+      border-top: 1px solid rgba(37,34,30,.22);
+      font-size: 26px;
+      line-height: 1.35;
+    }
+
+    .density-compact .compare-card { padding: 18px; }
+    .density-compact .compare-title { font-size: 29px; }
+    .density-compact .compare-list li { font-size: 23px; }
+
+    .table-wrap {
+      overflow: hidden;
+      border: 1.5px solid rgba(37,34,30,.3);
+      border-radius: 7px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-family: var(--sans);
+      font-size: 25px;
+      line-height: 1.32;
+    }
+
+    th {
+      padding: 16px 15px;
+      background: var(--ink);
+      color: var(--paper);
+      text-align: left;
+      font-weight: 700;
+    }
+
+    td {
+      padding: 14px 15px;
+      border-top: 1px solid rgba(37,34,30,.22);
+      vertical-align: top;
+      overflow-wrap: anywhere;
+    }
+
+    tbody tr:nth-child(even) td { background: rgba(251,248,240,.54); }
+    .density-compact table { font-size: 23px; }
+    .density-compact th { padding: 13px 12px; }
+    .density-compact td { padding: 11px 12px; }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    .step {
+      padding: 21px 23px 20px;
+      border: 2px solid rgba(37,34,30,.78);
+      border-radius: 9px;
+      background: rgba(251,248,240,.52);
+    }
+
+    .step-label {
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .step-title {
+      margin-top: 7px;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.28;
+    }
+
+    .step-text {
+      margin-top: 8px;
+      font-size: 27px;
+      line-height: 1.45;
+    }
+
+    .density-compact .step { padding: 17px 19px; }
+    .density-compact .step-title { font-size: 28px; }
+    .density-compact .step-text { font-size: 24px; }
+
+    .callout {
+      padding: 20px 24px;
+      border: 1.5px solid rgba(37,34,30,.28);
+      border-radius: 7px;
+      background: rgba(251,248,240,.72);
+      font-size: 29px;
+      line-height: 1.48;
+    }
+
+    .callout.warn { border-color: #c7ab43; background: rgba(243,229,139,.31); }
+    .callout.accent { border-color: rgba(162,63,50,.5); background: rgba(162,63,50,.075); }
+    .callout.dark { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+
+    .callout-title {
+      margin-bottom: 5px;
+      font-family: var(--sans);
+      font-size: 23px;
+      font-weight: 800;
+    }
+
+    .density-compact .callout { padding: 16px 20px; font-size: 25px; }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .chip {
+      padding: 10px 20px 11px;
+      border: 2px solid rgba(37,34,30,.88);
+      border-radius: 999px;
+      background: rgba(251,248,240,.52);
+      font-family: var(--sans);
+      font-size: 24px;
+      font-weight: 650;
+      line-height: 1.2;
+    }
+
+    .image-block {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 0;
+    }
+
+    .image-frame {
+      position: relative;
+      width: 100%;
+      height: var(--image-height, 480px);
+      overflow: hidden;
+      background: rgba(251,248,240,.35);
+    }
+
+    .image-frame img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: var(--image-fit, cover);
+      object-position: var(--image-position, center);
+    }
+
+    .image-block.paper .image-frame {
+      padding: 14px;
+      border: 1px solid rgba(37,34,30,.22);
+      background: var(--card);
+      box-shadow: 0 15px 30px rgba(37,34,30,.10);
+    }
+
+    .image-block.bleed .image-frame { border-radius: 0; }
+    .image-block.cutout .image-frame { background: transparent; }
+    .image-block.monochrome img { filter: grayscale(1) contrast(1.08); }
+
+    .image-caption {
+      max-width: 82%;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 21px;
+      line-height: 1.42;
+    }
+
+    .slide-footer {
+      display: flex;
+      flex: 0 0 30px;
+      align-items: flex-end;
+      justify-content: space-between;
+      min-height: 30px;
+      margin-top: 22px;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .density-compact .slide-footer { margin-top: 15px; }
+    .footer-author { margin-left: 28px; color: var(--ink); }
+
+    /* Interpreted decks use the available region as composition space, not a fixed top stack. */
+    .slide.interpreted:not(.density-compact) .slide-content {
+      justify-content: center;
+    }
+
+    .slide.interpreted.composition-split .slide-content,
+    .slide.interpreted.composition-diagram .slide-content {
+      align-content: center;
+    }
+
+    .slide.interpreted.composition-diagram .compare,
+    .slide.interpreted.composition-split .compare {
+      grid-column: 1 / -1;
+    }
+
+    .slide.interpreted.composition-split .paragraph {
+      align-self: center;
+    }
+
+    .slide.interpreted.composition-split .steps + .callout {
+      grid-column: auto;
+      align-self: start;
+    }
+
+    .slide.interpreted.primitive-scale-contrast .slide-title {
+      letter-spacing: -.035em;
+    }
+  </style>
+</head>
+<body>
+  <main id="deck" aria-label="Carousel preview"></main>
+  <script>
+    const spec = __CAROUSEL_SPEC__;
+    const allowedDensities = new Set(["airy", "normal", "compact"]);
+    const allowedArchetypes = new Set(["editorial", "poster", "split", "diagram", "timeline", "custom"]);
+    const allowedPrimitives = new Set([
+      "scale-contrast", "framing", "alignment-break", "annotation", "flow", "whitespace", "repetition"
+    ]);
+
+    function node(tag, className, text) {
+      const value = document.createElement(tag);
+      if (className) value.className = className;
+      if (text !== undefined && text !== null) value.textContent = String(text);
+      return value;
+    }
+
+    function appendRichText(container, text, emphasis) {
+      const source = String(text ?? "");
+      const marks = Array.isArray(emphasis)
+        ? [...new Set(emphasis.map(String).filter(Boolean))].sort((a, b) => b.length - a.length)
+        : [];
+      let position = 0;
+      while (position < source.length) {
+        let match = null;
+        let matchIndex = source.length;
+        for (const candidate of marks) {
+          const index = source.indexOf(candidate, position);
+          if (index >= 0 && index < matchIndex) {
+            match = candidate;
+            matchIndex = index;
+          }
+        }
+        if (match === null) {
+          container.append(document.createTextNode(source.slice(position)));
+          break;
+        }
+        if (matchIndex > position) {
+          container.append(document.createTextNode(source.slice(position, matchIndex)));
+        }
+        container.append(node("mark", "", match));
+        position = matchIndex + match.length;
+      }
+      if (source.length === 0) container.append(document.createTextNode(""));
+    }
+
+    function normalizeTextItem(item) {
+      return typeof item === "string" ? { text: item, emphasis: [] } : item;
+    }
+
+    function buildBlock(block) {
+      if (block.type === "heading") {
+        return node("h2", "block block-heading", block.text);
+      }
+
+      if (block.type === "paragraph") {
+        const wrapper = node("div", "block");
+        const paragraph = node("p", "paragraph");
+        appendRichText(paragraph, block.text, block.emphasis);
+        wrapper.append(paragraph);
+        return wrapper;
+      }
+
+      if (block.type === "metrics") {
+        const wrapper = node("div", "block metrics");
+        wrapper.style.setProperty("--columns", String(block.columns || Math.min(3, block.items.length)));
+        for (const item of block.items) {
+          const card = node("div", "metric");
+          card.append(node("div", "metric-value", item.value));
+          card.append(node("div", "metric-label", item.label));
+          if (item.source) card.append(node("div", "metric-source", item.source));
+          wrapper.append(card);
+        }
+        return wrapper;
+      }
+
+      if (block.type === "bullets") {
+        const list = node("ul", "block bullets");
+        for (const rawItem of block.items) {
+          const item = normalizeTextItem(rawItem);
+          const listItem = node("li");
+          appendRichText(listItem, item.text, item.emphasis);
+          list.append(listItem);
+        }
+        return list;
+      }
+
+      if (block.type === "quote") {
+        const wrapper = node("figure", `block quote ${block.variant === "dark" ? "dark" : ""}`.trim());
+        const text = node("blockquote", "quote-text");
+        appendRichText(text, block.text, block.emphasis);
+        wrapper.append(text);
+        if (block.source) wrapper.append(node("figcaption", "quote-source", `— ${block.source}`));
+        return wrapper;
+      }
+
+      if (block.type === "compare") {
+        const wrapper = node("div", "block compare");
+        wrapper.style.setProperty("--columns", String(block.items.length));
+        for (const item of block.items) {
+          const card = node("section", "compare-card");
+          card.append(node("div", "compare-title", item.title));
+          if (item.subtitle) card.append(node("div", "compare-subtitle", item.subtitle));
+          if (Array.isArray(item.items) && item.items.length) {
+            const list = node("ul", "compare-list");
+            item.items.forEach(value => list.append(node("li", "", value)));
+            card.append(list);
+          }
+          wrapper.append(card);
+        }
+        return wrapper;
+      }
+
+      if (block.type === "table") {
+        const wrapper = node("div", "block table-wrap");
+        const table = node("table");
+        const head = node("thead");
+        const headRow = node("tr");
+        block.headers.forEach(value => headRow.append(node("th", "", value)));
+        head.append(headRow);
+        table.append(head);
+        const body = node("tbody");
+        for (const row of block.rows) {
+          const tableRow = node("tr");
+          row.forEach(value => tableRow.append(node("td", "", value)));
+          body.append(tableRow);
+        }
+        table.append(body);
+        wrapper.append(table);
+        return wrapper;
+      }
+
+      if (block.type === "steps") {
+        const wrapper = node("div", "block steps");
+        for (const item of block.items) {
+          const card = node("section", "step");
+          if (item.label) card.append(node("div", "step-label", item.label));
+          card.append(node("div", "step-title", item.title));
+          if (item.text) card.append(node("div", "step-text", item.text));
+          wrapper.append(card);
+        }
+        return wrapper;
+      }
+
+      if (block.type === "callout") {
+        const wrapper = node("aside", `block callout ${block.variant || "plain"}`);
+        if (block.title) wrapper.append(node("div", "callout-title", block.title));
+        const text = node("div", "callout-text");
+        appendRichText(text, block.text, block.emphasis);
+        wrapper.append(text);
+        return wrapper;
+      }
+
+      if (block.type === "chips") {
+        const wrapper = node("div", "block chips");
+        block.items.forEach(value => wrapper.append(node("span", "chip", value)));
+        return wrapper;
+      }
+
+      if (block.type === "image") {
+        const treatment = ["plain", "paper", "bleed", "cutout", "monochrome"].includes(block.treatment)
+          ? block.treatment
+          : "plain";
+        const wrapper = node("figure", `block image-block ${treatment}`);
+        const frame = node("div", "image-frame");
+        frame.style.setProperty("--image-height", `${block.height || 480}px`);
+        frame.style.setProperty("--image-fit", block.fit === "contain" ? "contain" : "cover");
+        frame.style.setProperty("--image-position", block.position || "center");
+        const image = node("img");
+        image.src = block.src;
+        image.alt = block.alt;
+        image.decoding = "sync";
+        frame.dataset.role = block.role;
+        frame.append(image);
+        wrapper.append(frame);
+        if (block.caption) wrapper.append(node("figcaption", "image-caption", block.caption));
+        return wrapper;
+      }
+
+      throw new Error(`Unsupported block type: ${block.type}`);
+    }
+
+    function applyTheme(slide, theme) {
+      const mapping = {
+        background: "--paper",
+        ink: "--ink",
+        muted: "--muted",
+        accent: "--accent",
+        highlight: "--highlight",
+        card: "--card"
+      };
+      for (const [key, cssName] of Object.entries(mapping)) {
+        if (theme && theme[key]) slide.style.setProperty(cssName, theme[key]);
+      }
+    }
+
+    function buildSlide(slideSpec, index, total) {
+      const density = allowedDensities.has(slideSpec.density) ? slideSpec.density : "normal";
+      const composition = slideSpec.composition && typeof slideSpec.composition === "object"
+        ? slideSpec.composition
+        : {};
+      const archetype = allowedArchetypes.has(composition.archetype) ? composition.archetype : "editorial";
+      const primitiveClasses = Array.isArray(composition.primitives)
+        ? composition.primitives.filter(value => allowedPrimitives.has(value)).map(value => `primitive-${value}`)
+        : [];
+      const interpretedClass = spec.referenceDriven === true && spec.designManifest ? "interpreted" : "legacy";
+      const slide = node(
+        "article",
+        [`slide`, `density-${density}`, interpretedClass, `composition-${archetype}`, ...primitiveClasses].join(" ")
+      );
+      slide.dataset.slideIndex = String(index + 1);
+      slide.dataset.composition = archetype;
+      if (composition.intent) slide.dataset.compositionIntent = composition.intent;
+      applyTheme(slide, spec.theme || {});
+
+      const header = node("header", "slide-header");
+      const topline = node("div", "topline");
+      topline.append(node("div", "eyebrow", slideSpec.eyebrow || ""));
+      topline.append(node("div", "page-number", `${index + 1}/${total}`));
+      header.append(topline);
+      header.append(node("h1", "slide-title", slideSpec.title));
+      header.append(node("div", "title-rule"));
+      slide.append(header);
+
+      const content = node("section", "slide-content");
+      slideSpec.blocks.forEach(block => content.append(buildBlock(block)));
+      slide.append(content);
+
+      const footer = node("footer", "slide-footer");
+      footer.append(node("div", "footer-label", slideSpec.footer || spec.title || ""));
+      footer.append(node("div", "footer-author", spec.author || ""));
+      slide.append(footer);
+      return slide;
+    }
+
+    const deck = document.getElementById("deck");
+    spec.slides.forEach((slide, index) => deck.append(buildSlide(slide, index, spec.slides.length)));
+    document.documentElement.dataset.rendered = "true";
+    window.__renderReady = true;
+  </script>
+</body>
+</html>
