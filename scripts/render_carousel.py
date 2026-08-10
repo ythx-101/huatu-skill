@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Validate and render a Xiaohongshu carousel JSON spec to 1080x1350 PNGs."""
+"""Validate and render a Xiaohongshu carousel JSON spec to PNGs.
+
+The default canvas is the classic 1080x1350 (4:5) poster. A spec may request a
+different size with an optional top-level ``canvas`` field, e.g.
+``{"width": 1080, "height": 1440}`` for a 3:4 cover.
+"""
 
 from __future__ import annotations
 
@@ -18,6 +23,8 @@ from typing import Any
 
 WIDTH = 1080
 HEIGHT = 1350
+MIN_CANVAS = 720
+MAX_CANVAS = 2160
 ALLOWED_BLOCKS = {
     "heading",
     "paragraph",
@@ -60,6 +67,17 @@ DEFAULT_THEME = {
     "highlight": "#EEF2F7",   # --brand-tint 墨蓝×暖纸固色 tint（文字标记）
     "card": "#FAF9F5",        # --ivory 抬升容器
 }
+
+
+def canvas_dimensions(spec: dict[str, Any]) -> tuple[int, int]:
+    """Resolve the output canvas from an optional top-level ``canvas`` field."""
+    canvas = spec.get("canvas")
+    if isinstance(canvas, dict):
+        width = canvas.get("width")
+        height = canvas.get("height")
+        if isinstance(width, int) and not isinstance(width, bool) and isinstance(height, int) and not isinstance(height, bool):
+            return width, height
+    return WIDTH, HEIGHT
 MANIFEST_TEXT_FIELDS = (
     "candidateDirection",
     "visualThesis",
@@ -345,6 +363,16 @@ def validate_spec(spec: Any) -> list[str]:
             if key in theme and (not isinstance(theme[key], str) or not HEX_COLOR.fullmatch(theme[key])):
                 errors.append(f"theme.{key} must be a six-digit hex color")
 
+    canvas = spec.get("canvas")
+    if canvas is not None:
+        if not isinstance(canvas, dict):
+            errors.append("canvas must be an object with width and height")
+        else:
+            for axis in ("width", "height"):
+                value = canvas.get(axis)
+                if not isinstance(value, int) or isinstance(value, bool) or not MIN_CANVAS <= value <= MAX_CANVAS:
+                    errors.append(f"canvas.{axis} must be an integer between {MIN_CANVAS} and {MAX_CANVAS}")
+
     slides = spec.get("slides")
     if not isinstance(slides, list) or not 1 <= len(slides) <= 12:
         errors.append("slides must be a list containing 1–12 slides")
@@ -372,6 +400,13 @@ def validate_spec(spec: Any) -> list[str]:
             expect_text(errors, slide.get("eyebrow"), f"{path}.eyebrow")
         if slide.get("footer") is not None:
             expect_text(errors, slide.get("footer"), f"{path}.footer")
+        header_inset = slide.get("headerInset")
+        if header_inset is not None and (
+            not isinstance(header_inset, int) or isinstance(header_inset, bool) or not 0 <= header_inset <= 400
+        ):
+            errors.append(f"{path}.headerInset must be an integer from 0 to 400")
+        if slide.get("hidePageNumber") is not None and not isinstance(slide.get("hidePageNumber"), bool):
+            errors.append(f"{path}.hidePageNumber must be a boolean")
         if slide.get("density", "normal") not in ALLOWED_DENSITIES:
             errors.append(f"{path}.density must be one of {sorted(ALLOWED_DENSITIES)}")
         composition = slide.get("composition")
@@ -745,6 +780,11 @@ def build_html(template_path: Path, spec: dict[str, Any]) -> str:
         template = template_path.read_text(encoding="utf-8")
     except FileNotFoundError as exc:
         raise ValueError(f"Template does not exist: {template_path}") from exc
+    canvas_w, canvas_h = canvas_dimensions(spec)
+    template = (
+        template.replace("width: 1080px;", f"width: {canvas_w}px;")
+        .replace("height: 1350px;", f"height: {canvas_h}px;")
+    )
     token = "__CAROUSEL_SPEC__"
     if template.count(token) != 1:
         raise ValueError(f"Template must contain exactly one {token} token")
@@ -790,12 +830,13 @@ def run_render(spec: dict[str, Any], html_path: Path, output_dir: Path, browser_
             "Python Playwright is unavailable. Install it in the active Python environment before rendering."
         ) from exc
 
+    canvas_w, canvas_h = canvas_dimensions(spec)
     qa: dict[str, Any] = {
         "valid": True,
         "structurally_valid": True,
         "veg_review_required": True,
         "visually_approved": False,
-        "canvas": {"width": WIDTH, "height": HEIGHT},
+        "canvas": {"width": canvas_w, "height": canvas_h},
         "slideCount": len(spec["slides"]),
         "slides": [],
         "errors": [],
@@ -816,7 +857,7 @@ def run_render(spec: dict[str, Any], html_path: Path, output_dir: Path, browser_
                 args=["--allow-file-access-from-files"],
             )
             context = browser.new_context(
-                viewport={"width": WIDTH, "height": HEIGHT},
+                viewport={"width": canvas_w, "height": canvas_h},
                 device_scale_factor=1,
             )
             page = context.new_page()
@@ -924,9 +965,9 @@ def run_render(spec: dict[str, Any], html_path: Path, output_dir: Path, browser_
 
             qa["slides"] = slide_qa
             for result in slide_qa:
-                if result["width"] != WIDTH or result["height"] != HEIGHT:
+                if result["width"] != canvas_w or result["height"] != canvas_h:
                     qa["errors"].append(
-                        f"Slide {result['slide']} rendered at {result['width']}x{result['height']} instead of {WIDTH}x{HEIGHT}"
+                        f"Slide {result['slide']} rendered at {result['width']}x{result['height']} instead of {canvas_w}x{canvas_h}"
                     )
                 if result["overflow"]:
                     qa["errors"].append(f"Slide {result['slide']} elements exceed the safe slide regions")

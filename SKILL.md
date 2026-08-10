@@ -78,7 +78,7 @@ If comparison reports `distinct: false`, revise the concepts or compositions bef
 
 ## 4. Apply a bounded visual system
 
-Use a 1080×1350 canvas unless the user specifies another target. **Default theme is Kami (v2.0)**: warm parchment canvas, ink-blue accent, warm-gray text scale, serif-led hierarchy (weight 500, no pseudo-bold), hairline borders, whisper-only shadows, no default italics, no yellow marker wash. Full rules, tokens, and anti-patterns live in `references/kami-design.md`. The old brick-red / pale-yellow default is retired.
+Use a 1080×1350 canvas unless the user specifies another target. For a single 3:4 cover (e.g. Xiaohongshu 封面), set the top-level `canvas` field to `{"width": 1080, "height": 1440}` and render a one-slide poster spec. **Default theme is Kami (v2.0)**: warm parchment canvas, ink-blue accent, warm-gray text scale, serif-led hierarchy (weight 500, no pseudo-bold), hairline borders, whisper-only shadows, no default italics, no yellow marker wash. Full rules, tokens, and anti-patterns live in `references/kami-design.md`. The old brick-red / pale-yellow default is retired.
 
 When to keep Kami: the default — especially when the user wants 高级感 / 文档感 / 克制 / 正式 / 专业. When to override the theme explicitly: the user asks for high-saturation, playful, or "小红书爆款" visual energy; then provide a custom `theme` in the spec, never by silently reverting the defaults.
 

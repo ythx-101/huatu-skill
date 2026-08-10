@@ -8,6 +8,10 @@ The renderer accepts UTF-8 JSON. All user-visible values are plain text.
 {
   "title": "Internal deck label",
   "author": "@your-name",
+  "canvas": {
+    "width": 1080,
+    "height": 1440
+  },
   "referenceDriven": true,
   "designManifest": {},
   "theme": {
@@ -23,6 +27,20 @@ The renderer accepts UTF-8 JSON. All user-visible values are plain text.
 ```
 
 `slides` is required. The renderer supports 1–12 slides; 6–10 is the editorial recommendation, not a platform limit.
+
+Per-slide layout options (all optional):
+
+- `headerInset`: integer 0–400, px of top padding pushed before the slide
+  header. Use on single-slide covers (e.g. a 1:1 square) to keep the title and
+  core message inside the middle 60% of the canvas so feed cropping cannot
+  hide them.
+- `hidePageNumber`: boolean. Hides the `1/1` page counter for single-slide
+  covers; defaults to `false`.
+
+`canvas` is optional and defaults to the classic 1080×1350 (4:5) poster. Pass
+`{"width": 1080, "height": 1440}` for a 3:4 cover, or any integer pair between
+720 and 2160. The renderer resizes the exported PNGs and runs layout QA against
+the requested canvas.
 
 `referenceDriven` defaults to `false` for backward compatibility. When it is `true`, `designManifest` and a `composition` object on every slide are required. The renderer writes the manifest beside the exported images and never marks it visually approved.
 

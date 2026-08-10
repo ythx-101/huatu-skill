@@ -867,7 +867,12 @@
       const header = node("header", "slide-header");
       const topline = node("div", "topline");
       topline.append(node("div", "eyebrow", slideSpec.eyebrow || ""));
-      topline.append(node("div", "page-number", `${index + 1}/${total}`));
+      if (!slideSpec.hidePageNumber) {
+        topline.append(node("div", "page-number", `${index + 1}/${total}`));
+      }
+      if (Number.isInteger(slideSpec.headerInset) && slideSpec.headerInset > 0) {
+        header.style.paddingTop = `${slideSpec.headerInset}px`;
+      }
       header.append(topline);
       header.append(node("h1", "slide-title", slideSpec.title));
       header.append(node("div", "title-rule"));

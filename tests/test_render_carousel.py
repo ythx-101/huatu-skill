@@ -203,6 +203,62 @@ class ValidationTests(unittest.TestCase):
         self.assertTrue(resolved["slides"][0]["blocks"][0]["src"].startswith("file://"))
 
 
+class CanvasTests(unittest.TestCase):
+    def test_canvas_defaults_to_1080x1350(self) -> None:
+        self.assertEqual(renderer.canvas_dimensions(legacy_spec()), (1080, 1350))
+
+    def test_canvas_resolves_from_spec(self) -> None:
+        spec = legacy_spec()
+        spec["canvas"] = {"width": 1080, "height": 1440}
+        self.assertEqual(renderer.canvas_dimensions(spec), (1080, 1440))
+
+    def test_validate_accepts_valid_canvas(self) -> None:
+        spec = legacy_spec()
+        spec["canvas"] = {"width": 1080, "height": 1440}
+        self.assertEqual(renderer.validate_spec(spec), [])
+
+    def test_validate_rejects_invalid_canvas(self) -> None:
+        for bad_canvas in (
+            {"width": 1080},
+            {"width": 100, "height": 1440},
+            {"width": 1080, "height": "1440"},
+            "1080x1440",
+        ):
+            with self.subTest(canvas=bad_canvas):
+                spec = legacy_spec()
+                spec["canvas"] = bad_canvas
+                self.assertTrue(renderer.validate_spec(spec), bad_canvas)
+
+    def test_build_html_injects_canvas_dimensions(self) -> None:
+        template = SKILL_DIR / "assets" / "carousel-template.html"
+        cover = legacy_spec()
+        cover["canvas"] = {"width": 1080, "height": 1440}
+        cover_html = renderer.build_html(template, cover)
+        self.assertIn("width: 1080px;", cover_html)
+        self.assertIn("height: 1440px;", cover_html)
+        self.assertNotIn("height: 1350px;", cover_html)
+        classic_html = renderer.build_html(template, legacy_spec())
+        self.assertIn("height: 1350px;", classic_html)
+
+    def test_cover_layout_options_validate(self) -> None:
+        spec = legacy_spec()
+        spec["canvas"] = {"width": 1080, "height": 1080}
+        spec["slides"][0].update({"headerInset": 150, "hidePageNumber": True})
+        self.assertEqual(renderer.validate_spec(spec), [])
+
+    def test_cover_layout_options_reject_bad_values(self) -> None:
+        for key, value in (
+            ("headerInset", -1),
+            ("headerInset", 401),
+            ("headerInset", "150"),
+            ("hidePageNumber", "yes"),
+        ):
+            with self.subTest(key=key, value=value):
+                spec = legacy_spec()
+                spec["slides"][0][key] = value
+                self.assertTrue(renderer.validate_spec(spec), (key, value))
+
+
 class DiagnosticsTests(unittest.TestCase):
     def test_repetitive_six_slide_deck_warns(self) -> None:
         spec = interpreted_spec(6)
