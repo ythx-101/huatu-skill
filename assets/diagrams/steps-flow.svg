@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 400" role="img" aria-labelledby="title desc">
+  <title id="title">横向步骤流模板</title>
+  <desc id="desc">五个步骤从左到右推进，中间步骤是当前焦点。</desc>
+  <style>
+    svg { background: #f5f4ed; }
+    text { font-family: "Source Han Serif SC", "Songti SC", serif; }
+    .label { font-family: "JetBrains Mono", "SF Mono", monospace; letter-spacing: 1px; }
+  </style>
+  <path d="M0 0H1080V400H0Z" fill="#f5f4ed"/>
+  <path d="M48 72H1032" fill="none" stroke="#E5E3D8" stroke-width="1"/>
+
+  <!-- DATA START -->
+  <path d="M208 192H252" fill="none" stroke="#504e49" stroke-width="2"/>
+  <path d="M244 184L252 192L244 200" fill="none" stroke="#504e49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M396 192H440" fill="none" stroke="#504e49" stroke-width="2"/>
+  <path d="M432 184L440 192L432 200" fill="none" stroke="#504e49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M568 192H612" fill="none" stroke="#1B365D" stroke-width="2"/>
+  <path d="M604 184L612 192L604 200" fill="none" stroke="#1B365D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M756 192H800" fill="none" stroke="#504e49" stroke-width="2"/>
+  <path d="M792 184L800 192L792 200" fill="none" stroke="#504e49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="48" y="160" width="160" height="64" rx="8" fill="#faf9f5" stroke="#141413" stroke-width="2"/>
+  <text x="128" y="184" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">01</text>
+  <text x="128" y="208" fill="#141413" font-size="12" text-anchor="middle">步骤一</text>
+
+  <rect x="252" y="160" width="144" height="64" rx="8" fill="#faf9f5" stroke="#141413" stroke-width="2"/>
+  <text x="324" y="184" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">02</text>
+  <text x="324" y="208" fill="#141413" font-size="12" text-anchor="middle">步骤二</text>
+
+  <rect x="440" y="160" width="128" height="64" rx="8" fill="#EEF2F7" stroke="#1B365D" stroke-width="2"/>
+  <text x="504" y="184" fill="#1B365D" font-size="7" text-anchor="middle" class="label">03 · 焦点</text>
+  <text x="504" y="208" fill="#141413" font-size="12" text-anchor="middle">关键动作</text>
+
+  <rect x="612" y="160" width="144" height="64" rx="8" fill="#faf9f5" stroke="#141413" stroke-width="2"/>
+  <text x="684" y="184" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">04</text>
+  <text x="684" y="208" fill="#141413" font-size="12" text-anchor="middle">步骤四</text>
+
+  <rect x="800" y="160" width="160" height="64" rx="8" fill="#faf9f5" stroke="#504e49" stroke-width="2"/>
+  <text x="880" y="184" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">05</text>
+  <text x="880" y="208" fill="#141413" font-size="12" text-anchor="middle">完成输出</text>
+  <!-- DATA END -->
+
+  <text x="48" y="48" fill="#1B365D" font-size="9" class="label">STEPS FLOW</text>
+  <text x="1032" y="48" fill="#6b6a64" font-size="9" text-anchor="end">从左到右只保留一个推进方向</text>
+</svg>

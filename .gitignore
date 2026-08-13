@@ -4,3 +4,6 @@ __pycache__/
 .pytest_cache/
 rendered/
 design-history.jsonl
+
+# SOP 过程文件（plan/signoff/review 本地留存，不进仓库）
+workflows/

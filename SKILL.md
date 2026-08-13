@@ -5,10 +5,11 @@ description: Turn articles, research, notes, data, or existing drafts into clear
 
 # 画图 Skill
 
-Build a coherent carousel, not a collection of decorated paragraphs. Treat model interpretation, information architecture, visual hierarchy, deterministic rendering, and visual QA as one workflow. Constraints prevent accidents; a content-specific visual thesis creates meaning.
+Build a carousel that helps the reader understand the meaning — before it looks coherent, before it passes the rules. A deck succeeds when the layout itself makes a relationship, mechanism, or judgment easier to see than the text alone would. Treat model interpretation, information architecture, visual hierarchy, deterministic rendering, and visual QA as one workflow. Constraints are guardrails, not goals: they prevent accidents, but a content-specific visual thesis creates meaning. When a rule and the reader's comprehension conflict, the rule yields.
 
 ## Choose the task path
 
+- For 知识型、机制型或研究型内容，默认选择 `mixed`（图文交替），并同时阅读 [references/image-led-design.md](references/image-led-design.md) 与 [references/diagram-system.md](references/diagram-system.md)；只有用户显式要求全文字时才选择 `editorial`。
 - For source material or a long article, extract the thesis and build a slide-by-slide narrative.
 - For an existing outline or JSON spec, preserve the argument and improve page roles, density, and components.
 - For existing images, inspect every image first. Diagnose hierarchy, spacing, contrast, consistency, clipping, and sequence before rebuilding.
@@ -66,7 +67,7 @@ Choose a `visualMode` before choosing blocks:
 - `mixed` when image and structure should alternate;
 - `image-led`, `photo-diary`, `object-study`, or `poetic-poster` when a visual anchor should carry the page before explanatory text.
 
-For any mode beyond `editorial`, add a short `materialSystem`, `imageCadence`, and per-slide `visualAnchor` plan to the manifest. Do not satisfy this step by placing generic AI decoration behind existing cards. Each image needs a semantic role: hero, evidence, atmosphere, texture, motif, or transition.
+知识型、机制型和研究型内容默认使用 `mixed`；只有用户显式选择 `editorial` 时才改为全文字路径。任何非 `editorial` 模式的 manifest **必须**包含简短的 `materialSystem`、`imageCadence` 与逐页 `visualAnchor` 计划，不能只写一个模式名称。Do not satisfy this step by placing generic AI decoration behind existing cards. Each image needs a semantic role: hero, evidence, atmosphere, texture, motif, or transition.
 
 Before a full deck, create three two-page directions that differ in interpretation and composition—not merely colors. Prefer metaphor-led, typographic/editorial, and diagram/spatial directions when appropriate. Compare them with:
 
@@ -110,6 +111,13 @@ Copy [assets/starter-carousel.json](assets/starter-carousel.json) into the worki
 
 Use only the supported block types documented in [references/spec-format.md](references/spec-format.md), including the local-only `image` block. Treat all content as plain text; never insert user text into the HTML template as executable markup. Image sources must be local PNG, JPEG, WebP, or SVG paths relative to the spec or absolute local paths; remote URLs are rejected.
 
+For `mixed` or `image-led` specs, these are hard requirements:
+
+- 每张图先写一句关系命题：这张图让读者比读段落更快看见的流程、对比、趋势或分层是什么（[references/diagram-system.md](references/diagram-system.md) 的一句话测试）。过不了测试就不画；
+- 知识型 deck 优先至少 2 张图卡（diagram 计入），但以一句话测试为准：内容只撑得住 0–1 张真有教学增量的图时，宁缺毋滥，不要为凑配额补装饰图；
+- 每张图必须有语义明确的 `alt` 与 schema 合法的 `role`，并在规划中承担 hero、evidence、annotate、contrast、echo 或 transition 之一，不能只负责装饰；
+- [assets/diagrams/](assets/diagrams/) 模板是候选不是默认：先按内容关系决定结构，再从模板里选最接近的作起点改写；内容被迫适配模板节点数时，删除、合并或重排节点，保留关系本身。
+
 Run structural validation before rendering:
 
 ```bash
@@ -141,6 +149,14 @@ If Playwright or a Chromium browser is unavailable, report the exact missing pre
 
 Read `qa.json`, then inspect the rendered PNGs visually. For a deck of ten pages or fewer, inspect every page. At minimum verify:
 
+Comprehension probes come first — each is blocking, with the same weight as overflow:
+
+- whether the slide still carries mood or meaning when its explanatory copy is covered (遮文仍懂);
+- whether every image and diagram adds a teaching increment: it makes a flow, comparison, trend, or layer visible faster than the paragraph would (教学增量，diagram 一句话测试);
+- whether every image card has a visual anchor and first reading target visible within one second at 1× phone size.
+
+Then structure and craft:
+
 - title hierarchy and line breaks;
 - no clipped or overlapping text;
 - readable source labels and table cells;
@@ -148,15 +164,18 @@ Read `qa.json`, then inspect the rendered PNGs visually. For a deck of ten pages
 - restrained highlighting and accent usage;
 - sequence-level density and rhythm;
 - accurate author/footer text;
-- absence of copied identity elements.
+- absence of copied identity elements;
 - semantic role, focal point, crop, and provenance of every image;
-- whether the slide still carries mood or meaning when its explanatory copy is covered;
+- whether the image adds a relationship or proof instead of repeating nearby text;
+- whether every image is non-decorative and has a named semantic job;
 - absence of generic AI visual clichés used only as decoration;
 - coherence of paper, ink, grain, tape, shadow, or other material treatments;
-- sequence-level image cadence: no accidental return to a wall of text after an image-led opening.
+- sequence-level image cadence: no accidental return to a wall of text after an image-led opening;
 - semantic fit between each page and its recorded composition intent;
 - meaningful variation from recent decks without random novelty;
 - at least one deliberate moment of contrast or surprise that serves the argument.
+
+Diagram budget conformance is suggested, not blocking: `references/diagram-system.md` 的复杂度预算（节点数、字号档、宽度档）是默认参考，内容关系需要时允许偏离，偏离要在 manifest 里写一句理由。理解失败永远优先于预算合规。
 
 Read the three statuses separately: `structurally_valid` means the page did not break; `veg_review_required` remains true until review; `visually_approved` is never granted by the renderer. Do not accept a deck that merely passes overflow checks. Visual balance, awkward orphan lines, misleading emphasis, and a manifest that the render fails to express still require judgment. Revise the JSON and rerender until both automated and visual checks pass.
 

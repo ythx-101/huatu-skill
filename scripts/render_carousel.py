@@ -89,6 +89,13 @@ MANIFEST_TEXT_FIELDS = (
     "whyThisVisual",
 )
 
+# 理解证据探针：reference-driven 的 manifest 出现占位/空壳文字 = 「没理解就填表」，直接报 spec 错误。
+PLACEHOLDER_PATTERN = re.compile(
+    r"(?i)\b(t\.?b\.?d\.?|todo|placeholder|lorem ipsum|to be (?:determined|filled)|fill (?:me )?in)\b|"
+    r"(待定|占位|待补充|待补写|待完善)"
+)
+DEGENERATE_TEXT_PATTERN = re.compile(r"^[\s.\-_…]{1,8}$|^x{2,}$", re.IGNORECASE)
+
 
 def is_text(value: Any) -> bool:
     return isinstance(value, str) and bool(value.strip())
@@ -97,6 +104,13 @@ def is_text(value: Any) -> bool:
 def expect_text(errors: list[str], value: Any, path: str) -> None:
     if not is_text(value):
         errors.append(f"{path} must be a non-empty string")
+
+
+def has_placeholder_text(value: Any) -> bool:
+    """True when the field is empty, a placeholder token, or a degenerate filler."""
+    if not is_text(value):
+        return True
+    return bool(PLACEHOLDER_PATTERN.search(value) or DEGENERATE_TEXT_PATTERN.match(value))
 
 
 def expect_text_list(errors: list[str], value: Any, path: str, minimum: int = 1) -> None:
@@ -280,20 +294,34 @@ def validate_manifest(errors: list[str], manifest: Any, slide_count: int) -> Non
         errors.append("designManifest must be an object for reference-driven work")
         return
     for key in MANIFEST_TEXT_FIELDS:
-        expect_text(errors, manifest.get(key), f"designManifest.{key}")
+        value = manifest.get(key)
+        expect_text(errors, value, f"designManifest.{key}")
+        if is_text(value) and has_placeholder_text(value):
+            errors.append(f"designManifest.{key} is placeholder text; record the actual visual reasoning (理解证据) instead")
     motifs = manifest.get("motifs")
     if not isinstance(motifs, list) or not 1 <= len(motifs) <= 2:
         errors.append("designManifest.motifs must contain one or two meaningful motifs")
     else:
         for index, value in enumerate(motifs):
             expect_text(errors, value, f"designManifest.motifs[{index}]")
-    expect_text_list(errors, manifest.get("avoidList"), "designManifest.avoidList")
+            if is_text(value) and has_placeholder_text(value):
+                errors.append(f"designManifest.motifs[{index}] is placeholder text; name the actual motif")
+    avoid_list = manifest.get("avoidList")
+    if not isinstance(avoid_list, list) or not avoid_list:
+        errors.append("designManifest.avoidList must be a list with at least 1 item(s)")
+    else:
+        for index, value in enumerate(avoid_list):
+            expect_text(errors, value, f"designManifest.avoidList[{index}]")
+            if is_text(value) and has_placeholder_text(value):
+                errors.append(f"designManifest.avoidList[{index}] is placeholder text; name the actual habit to avoid")
     intents = manifest.get("compositionIntent")
     if not isinstance(intents, list) or len(intents) != slide_count:
         errors.append(f"designManifest.compositionIntent must contain exactly {slide_count} slide intents")
     else:
         for index, value in enumerate(intents):
             expect_text(errors, value, f"designManifest.compositionIntent[{index}]")
+            if is_text(value) and has_placeholder_text(value):
+                errors.append(f"designManifest.compositionIntent[{index}] is placeholder text; state what the page makes visible")
     visual_mode = manifest.get("visualMode")
     if visual_mode is not None and visual_mode not in ALLOWED_VISUAL_MODES:
         errors.append(f"designManifest.visualMode must be one of {sorted(ALLOWED_VISUAL_MODES)}")
@@ -304,8 +332,12 @@ def validate_manifest(errors: list[str], manifest: Any, slide_count: int) -> Non
         else:
             for index, value in enumerate(material_system):
                 expect_text(errors, value, f"designManifest.materialSystem[{index}]")
+                if is_text(value) and has_placeholder_text(value):
+                    errors.append(f"designManifest.materialSystem[{index}] is placeholder text; name the actual material treatment")
     if manifest.get("imageCadence") is not None:
         expect_text(errors, manifest.get("imageCadence"), "designManifest.imageCadence")
+        if is_text(manifest.get("imageCadence")) and has_placeholder_text(manifest.get("imageCadence")):
+            errors.append("designManifest.imageCadence is placeholder text; describe the actual image rhythm")
 
 
 def validate_composition(errors: list[str], composition: Any, path: str) -> None:
@@ -405,6 +437,13 @@ def validate_spec(spec: Any) -> list[str]:
             not isinstance(header_inset, int) or isinstance(header_inset, bool) or not 0 <= header_inset <= 400
         ):
             errors.append(f"{path}.headerInset must be an integer from 0 to 400")
+        display_scale = slide.get("displayScale")
+        if display_scale is not None and (
+            not isinstance(display_scale, (int, float))
+            or isinstance(display_scale, bool)
+            or not 1.0 <= display_scale <= 2.0
+        ):
+            errors.append(f"{path}.displayScale must be a number from 1.0 to 2.0")
         if slide.get("hidePageNumber") is not None and not isinstance(slide.get("hidePageNumber"), bool):
             errors.append(f"{path}.hidePageNumber must be a boolean")
         if slide.get("density", "normal") not in ALLOWED_DENSITIES:

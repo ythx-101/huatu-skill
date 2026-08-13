@@ -13,6 +13,7 @@
 - 将长文章、研究笔记或已有草稿改写成 6–10 页轮播叙事
 - 用可检查的 `designManifest` 记录视觉命题、隐喻、节奏与构图意图
 - 支持 editorial、mixed、image-led、photo-diary、object-study、poetic-poster 六种视觉模式
+- 知识型内容默认走 image-led / mixed 图文交替路径，并可复用 6 种 diagram SVG 模板表达流程、步骤、层级、时间、象限与对比关系
 - 支持本地 PNG、JPEG、WebP、SVG，并赋予 hero、evidence、atmosphere 等语义角色
 - 检查溢出、低对比度、重复构图、弱图像节奏与近期设计相似度
 - 生成本地 HTML 预览和逐页 PNG，但把最终审美判断与发布权留给人

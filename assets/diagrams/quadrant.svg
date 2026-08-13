@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 720" role="img" aria-labelledby="title desc">
+  <title id="title">双轴象限模板</title>
+  <desc id="desc">对象按横轴和纵轴定位，右上区域与一个对象为焦点。</desc>
+  <style>
+    svg { background: #f5f4ed; }
+    text { font-family: "Source Han Serif SC", "Songti SC", serif; }
+    .label { font-family: "JetBrains Mono", "SF Mono", monospace; letter-spacing: 1px; }
+  </style>
+  <path d="M0 0H1080V720H0Z" fill="#f5f4ed"/>
+  <path d="M48 72H1032" fill="none" stroke="#E5E3D8" stroke-width="1"/>
+  <path d="M540 112H956V352H540Z" fill="#EEF2F7"/>
+  <path d="M124 112H956V592H124Z" fill="none" stroke="#E8E6DC" stroke-width="2"/>
+
+  <!-- DATA START -->
+  <path d="M124 592H980" fill="none" stroke="#504e49" stroke-width="2"/>
+  <path d="M972 584L980 592L972 600" fill="none" stroke="#504e49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M124 592V88" fill="none" stroke="#504e49" stroke-width="2"/>
+  <path d="M116 96L124 88L132 96" fill="none" stroke="#504e49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M540 112V592M124 352H956" fill="none" stroke="#E8E6DC" stroke-width="2" stroke-dasharray="8 8"/>
+
+  <text x="124" y="624" fill="#6b6a64" font-size="7" class="label">低投入</text>
+  <text x="956" y="624" fill="#6b6a64" font-size="7" text-anchor="end" class="label">高投入</text>
+  <text x="92" y="584" fill="#6b6a64" font-size="7" text-anchor="end" class="label">低影响</text>
+  <text x="92" y="120" fill="#6b6a64" font-size="7" text-anchor="end" class="label">高影响</text>
+
+  <text x="332" y="136" fill="#6b6a64" font-size="9" text-anchor="middle">优先验证</text>
+  <text x="748" y="136" fill="#1B365D" font-size="9" text-anchor="middle">重点投入</text>
+  <text x="332" y="568" fill="#6b6a64" font-size="9" text-anchor="middle">暂缓处理</text>
+  <text x="748" y="568" fill="#6b6a64" font-size="9" text-anchor="middle">谨慎评估</text>
+
+  <circle cx="300" cy="232" r="8" fill="#faf9f5" stroke="#141413" stroke-width="2"/>
+  <text x="316" y="236" fill="#141413" font-size="12">对象甲</text>
+
+  <circle cx="684" cy="208" r="12" fill="#1B365D" stroke="#1B365D" stroke-width="2"/>
+  <text x="704" y="212" fill="#1B365D" font-size="12">对象乙 · 焦点</text>
+
+  <circle cx="816" cy="284" r="8" fill="#faf9f5" stroke="#504e49" stroke-width="2"/>
+  <text x="832" y="288" fill="#141413" font-size="12">对象丙</text>
+
+  <circle cx="424" cy="436" r="8" fill="#faf9f5" stroke="#504e49" stroke-width="2"/>
+  <text x="440" y="440" fill="#141413" font-size="12">对象丁</text>
+
+  <circle cx="724" cy="488" r="8" fill="#faf9f5" stroke="#6b6a64" stroke-width="2"/>
+  <text x="740" y="492" fill="#504e49" font-size="12">对象戊</text>
+  <!-- DATA END -->
+
+  <text x="48" y="48" fill="#1B365D" font-size="9" class="label">QUADRANT</text>
+  <text x="1032" y="48" fill="#6b6a64" font-size="9" text-anchor="end">两个轴都必须具有清晰的判断含义</text>
+</svg>

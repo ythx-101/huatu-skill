@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 520" role="img" aria-labelledby="title desc">
+  <title id="title">时间线模板</title>
+  <desc id="desc">五个里程碑沿时间轴推进，中间转折点为焦点。</desc>
+  <style>
+    svg { background: #f5f4ed; }
+    text { font-family: "Source Han Serif SC", "Songti SC", serif; }
+    .label { font-family: "JetBrains Mono", "SF Mono", monospace; letter-spacing: 1px; }
+  </style>
+  <path d="M0 0H1080V520H0Z" fill="#f5f4ed"/>
+  <path d="M48 72H1032" fill="none" stroke="#E5E3D8" stroke-width="1"/>
+
+  <!-- DATA START -->
+  <path d="M96 260H984" fill="none" stroke="#504e49" stroke-width="2"/>
+  <path d="M976 252L984 260L976 268" fill="none" stroke="#504e49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <path d="M160 252V196" fill="none" stroke="#6b6a64" stroke-width="1" stroke-dasharray="8 8"/>
+  <path d="M348 268V324" fill="none" stroke="#6b6a64" stroke-width="1" stroke-dasharray="8 8"/>
+  <path d="M540 248V196" fill="none" stroke="#1B365D" stroke-width="2"/>
+  <path d="M732 268V324" fill="none" stroke="#6b6a64" stroke-width="1" stroke-dasharray="8 8"/>
+  <path d="M920 252V196" fill="none" stroke="#6b6a64" stroke-width="1" stroke-dasharray="8 8"/>
+
+  <circle cx="160" cy="260" r="8" fill="#faf9f5" stroke="#504e49" stroke-width="2"/>
+  <circle cx="348" cy="260" r="8" fill="#faf9f5" stroke="#504e49" stroke-width="2"/>
+  <circle cx="540" cy="260" r="12" fill="#1B365D" stroke="#1B365D" stroke-width="2"/>
+  <circle cx="732" cy="260" r="8" fill="#faf9f5" stroke="#504e49" stroke-width="2"/>
+  <circle cx="920" cy="260" r="8" fill="#faf9f5" stroke="#504e49" stroke-width="2"/>
+
+  <rect x="96" y="132" width="128" height="64" rx="8" fill="#faf9f5" stroke="#141413" stroke-width="2"/>
+  <text x="160" y="156" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">阶段一</text>
+  <text x="160" y="180" fill="#141413" font-size="12" text-anchor="middle">起点</text>
+
+  <rect x="284" y="324" width="128" height="64" rx="8" fill="#faf9f5" stroke="#141413" stroke-width="2"/>
+  <text x="348" y="348" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">阶段二</text>
+  <text x="348" y="372" fill="#141413" font-size="12" text-anchor="middle">验证</text>
+
+  <rect x="468" y="132" width="144" height="64" rx="8" fill="#EEF2F7" stroke="#1B365D" stroke-width="2"/>
+  <text x="540" y="156" fill="#1B365D" font-size="7" text-anchor="middle" class="label">关键转折</text>
+  <text x="540" y="180" fill="#141413" font-size="12" text-anchor="middle">决定改变</text>
+
+  <rect x="668" y="324" width="128" height="64" rx="8" fill="#faf9f5" stroke="#141413" stroke-width="2"/>
+  <text x="732" y="348" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">阶段四</text>
+  <text x="732" y="372" fill="#141413" font-size="12" text-anchor="middle">扩展</text>
+
+  <rect x="856" y="132" width="128" height="64" rx="8" fill="#faf9f5" stroke="#504e49" stroke-width="2"/>
+  <text x="920" y="156" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">阶段五</text>
+  <text x="920" y="180" fill="#141413" font-size="12" text-anchor="middle">当前状态</text>
+  <!-- DATA END -->
+
+  <text x="48" y="48" fill="#1B365D" font-size="9" class="label">TIMELINE</text>
+  <text x="1032" y="48" fill="#6b6a64" font-size="9" text-anchor="end">时间轴只强调真正改变叙事的节点</text>
+</svg>

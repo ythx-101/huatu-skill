@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 640" role="img" aria-labelledby="title desc">
+  <title id="title">决策分支与回环模板</title>
+  <desc id="desc">输入经过核心判断后分成两路，再合流进入结果并回到下一轮。</desc>
+  <style>
+    svg { background: #f5f4ed; }
+    text { font-family: "Source Han Serif SC", "Songti SC", serif; }
+    .label { font-family: "JetBrains Mono", "SF Mono", monospace; letter-spacing: 1px; }
+  </style>
+  <path d="M0 0H1080V640H0Z" fill="#f5f4ed"/>
+  <path d="M48 72H1032" fill="none" stroke="#E5E3D8" stroke-width="1"/>
+
+  <!-- DATA START -->
+  <!-- connectors behind nodes; every chevron tip lands on a node edge -->
+  <path d="M240 192H320" fill="none" stroke="#504e49" stroke-width="2"/>
+  <path d="M312 184L320 192L312 200" fill="none" stroke="#504e49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <path d="M480 192H520V128H560" fill="none" stroke="#1B365D" stroke-width="2"/>
+  <path d="M552 120L560 128L552 136" fill="none" stroke="#1B365D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="516" y="116" fill="#1B365D" font-size="7" text-anchor="end" class="label">符合</text>
+
+  <path d="M480 192H520V296H560" fill="none" stroke="#504e49" stroke-width="2"/>
+  <path d="M552 288L560 296L552 304" fill="none" stroke="#504e49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="516" y="284" fill="#6b6a64" font-size="7" text-anchor="end" class="label">否则</text>
+
+  <path d="M704 128H752V196H800" fill="none" stroke="#504e49" stroke-width="2"/>
+  <path d="M792 188L800 196L792 204" fill="none" stroke="#504e49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M704 296H752V196H800" fill="none" stroke="#504e49" stroke-width="2"/>
+
+  <path d="M880 228V432H400V224" fill="none" stroke="#6b6a64" stroke-width="2" stroke-dasharray="8 8"/>
+  <path d="M392 232L400 224L408 232" fill="none" stroke="#6b6a64" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="640" y="456" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">进入下一轮</text>
+
+  <rect x="80" y="160" width="160" height="64" rx="8" fill="#faf9f5" stroke="#141413" stroke-width="2"/>
+  <text x="160" y="184" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">输入</text>
+  <text x="160" y="208" fill="#141413" font-size="12" text-anchor="middle">待处理信号</text>
+
+  <rect x="320" y="160" width="160" height="64" rx="8" fill="#EEF2F7" stroke="#1B365D" stroke-width="2"/>
+  <text x="400" y="184" fill="#1B365D" font-size="7" text-anchor="middle" class="label">核心判断</text>
+  <text x="400" y="208" fill="#141413" font-size="12" text-anchor="middle">是否满足条件</text>
+
+  <rect x="560" y="96" width="144" height="64" rx="8" fill="#faf9f5" stroke="#141413" stroke-width="2"/>
+  <text x="632" y="120" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">路径甲</text>
+  <text x="632" y="144" fill="#141413" font-size="12" text-anchor="middle">执行主方案</text>
+
+  <rect x="560" y="264" width="144" height="64" rx="8" fill="#faf9f5" stroke="#504e49" stroke-width="2"/>
+  <text x="632" y="288" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">路径乙</text>
+  <text x="632" y="312" fill="#141413" font-size="12" text-anchor="middle">调整后重试</text>
+
+  <rect x="800" y="164" width="160" height="64" rx="8" fill="#faf9f5" stroke="#141413" stroke-width="2"/>
+  <text x="880" y="188" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">合流</text>
+  <text x="880" y="212" fill="#141413" font-size="12" text-anchor="middle">生成本轮结果</text>
+  <!-- DATA END -->
+
+  <text x="48" y="48" fill="#1B365D" font-size="9" class="label">FLOWCHART</text>
+  <text x="1032" y="48" fill="#6b6a64" font-size="9" text-anchor="end">分支决定路径，回环表示迭代</text>
+</svg>

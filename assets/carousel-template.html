@@ -266,6 +266,7 @@
 
     mark {
       padding: 0 .08em;
+      white-space: nowrap;
       color: inherit;
       background: linear-gradient(transparent 45%, var(--highlight) 45%, var(--highlight) 92%, transparent 92%);
     }
@@ -874,7 +875,11 @@
         header.style.paddingTop = `${slideSpec.headerInset}px`;
       }
       header.append(topline);
-      header.append(node("h1", "slide-title", slideSpec.title));
+      const title = node("h1", "slide-title", slideSpec.title);
+      if (typeof slideSpec.displayScale === "number" && slideSpec.displayScale > 0) {
+        title.style.fontSize = `calc(78px * ${slideSpec.displayScale})`;
+      }
+      header.append(title);
       header.append(node("div", "title-rule"));
       slide.append(header);
 

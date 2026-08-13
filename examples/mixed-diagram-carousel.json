@@ -1,0 +1,188 @@
+{
+  "title": "如何把机制讲清楚",
+  "author": "@example",
+  "canvas": {
+    "width": 1080,
+    "height": 1350
+  },
+  "referenceDriven": true,
+  "designManifest": {
+    "candidateDirection": "Diagram-led explanation",
+    "visualThesis": "A mechanism becomes understandable when readers can see decisions and handoffs before reading the explanation.",
+    "readerEmotion": "Confusion, orientation, recognition, then confidence.",
+    "semanticMetaphor": "A visible route through decisions, handoffs, and review loops.",
+    "motifs": ["decision gate", "handoff line"],
+    "rhythmPlan": "Alternate two diagram anchors with concise structural and reflective pages.",
+    "compositionIntent": [
+      "Make the decision loop visible before introducing explanatory rules.",
+      "Turn four editorial actions into a compact working sequence.",
+      "Pause on the test that separates a useful diagram from decoration.",
+      "Show that a clear explanation advances through explicit handoffs.",
+      "Contrast a text-first explanation with a relationship-first explanation.",
+      "End with a concise review rule the reader can apply immediately."
+    ],
+    "contrastPlan": "Use diagrams on pages one and four, with quieter text-led pages between them.",
+    "typeStrategy": "Serif-led claims with short operational labels and restrained ink-blue emphasis.",
+    "avoidList": ["decorative diagrams", "repeated card stacks", "paragraphs inside nodes"],
+    "whyThisVisual": "The topic teaches how relationships become legible, so diagrams must demonstrate that claim directly.",
+    "visualMode": "mixed",
+    "materialSystem": ["warm paper", "ink-blue line"],
+    "imageCadence": "Diagram-led opening, two text-led explanations, a second diagram anchor, comparison, then a quiet conclusion.",
+    "assetPlan": [
+      {
+        "slide": 1,
+        "role": "hero",
+        "sourceClass": "bundled diagram template",
+        "visualAnchor": "the decision branch and return loop",
+        "focalPoint": "the ink-blue decision node",
+        "textImageRelationship": "embody"
+      },
+      {
+        "slide": 4,
+        "role": "evidence",
+        "sourceClass": "bundled diagram template",
+        "visualAnchor": "the ordered handoff across five stages",
+        "focalPoint": "the ink-blue middle stage",
+        "textImageRelationship": "evidence"
+      }
+    ]
+  },
+  "slides": [
+    {
+      "eyebrow": "机制可视化 · 01",
+      "title": "先让读者看见路径，再邀请他理解解释",
+      "density": "airy",
+      "composition": {
+        "archetype": "poster",
+        "primitives": ["flow", "scale-contrast"],
+        "intent": "Make the decision loop visible before introducing explanatory rules."
+      },
+      "blocks": [
+        {
+          "type": "image",
+          "src": "../assets/diagrams/flowchart.svg",
+          "alt": "输入经过判断后分成两条路径，并在复核后回到下一轮的机制流程",
+          "caption": "分支回答去哪里，回环回答如何继续。",
+          "role": "hero",
+          "fit": "contain",
+          "position": "center",
+          "treatment": "paper",
+          "height": 500
+        }
+      ],
+      "footer": "示例内容 · 非真实项目"
+    },
+    {
+      "eyebrow": "编辑动作 · 02",
+      "title": "四步把一段机制说明变成可检查的叙事",
+      "density": "normal",
+      "composition": {
+        "archetype": "timeline",
+        "primitives": ["flow", "repetition"],
+        "intent": "Turn four editorial actions into a compact working sequence."
+      },
+      "blocks": [
+        {
+          "type": "steps",
+          "items": [
+            {"label": "01", "title": "找关系", "text": "先确认要讲流程、对比、趋势还是分层。"},
+            {"label": "02", "title": "定入口", "text": "让视线一秒内找到起点与焦点。"},
+            {"label": "03", "title": "删重复", "text": "图里已经可见的关系，不再用正文复述。"},
+            {"label": "04", "title": "做复核", "text": "遮住旁文，检查图是否仍能传递意义。"}
+          ]
+        }
+      ],
+      "footer": "示例内容 · 非真实项目"
+    },
+    {
+      "eyebrow": "一句话测试 · 03",
+      "title": "不是每段文字都值得被画成图",
+      "density": "airy",
+      "composition": {
+        "archetype": "poster",
+        "primitives": ["framing", "whitespace"],
+        "intent": "Pause on the test that separates a useful diagram from decoration."
+      },
+      "blocks": [
+        {
+          "type": "quote",
+          "text": "如果图没有比段落多教会一种关系，就保留段落。",
+          "source": "示例判断规则",
+          "variant": "light"
+        }
+      ],
+      "footer": "示例内容 · 非真实项目"
+    },
+    {
+      "eyebrow": "交接可视化 · 04",
+      "title": "顺序清楚，读者才知道下一步发生什么",
+      "density": "airy",
+      "composition": {
+        "archetype": "timeline",
+        "primitives": ["flow", "annotation"],
+        "intent": "Show that a clear explanation advances through explicit handoffs."
+      },
+      "blocks": [
+        {
+          "type": "image",
+          "src": "../assets/diagrams/steps-flow.svg",
+          "alt": "五个阶段从识别关系到复核结果依次交接的步骤流程",
+          "caption": "每条线都表示一次明确的交接。",
+          "role": "evidence",
+          "fit": "contain",
+          "position": "center",
+          "treatment": "plain",
+          "height": 500
+        }
+      ],
+      "footer": "示例内容 · 非真实项目"
+    },
+    {
+      "eyebrow": "表达差异 · 05",
+      "title": "图文结合，不等于给文字加一张背景图",
+      "density": "normal",
+      "composition": {
+        "archetype": "split",
+        "primitives": ["alignment-break", "scale-contrast"],
+        "intent": "Contrast a text-first explanation with a relationship-first explanation."
+      },
+      "blocks": [
+        {
+          "type": "compare",
+          "items": [
+            {
+              "title": "文字优先",
+              "subtitle": "读完才知道关系",
+              "items": ["段落承担全部解释", "图像只是装饰", "入口依赖标题"]
+            },
+            {
+              "title": "关系优先",
+              "subtitle": "先看见，再细读",
+              "items": ["视觉锚点先出现", "图像承担机制", "正文补充边界"]
+            }
+          ]
+        }
+      ],
+      "footer": "示例内容 · 非真实项目"
+    },
+    {
+      "eyebrow": "交付前复核 · 06",
+      "title": "一秒看见，读完能够复述",
+      "density": "airy",
+      "composition": {
+        "archetype": "editorial",
+        "primitives": ["framing", "whitespace"],
+        "intent": "End with a concise review rule the reader can apply immediately."
+      },
+      "blocks": [
+        {
+          "type": "callout",
+          "title": "最终检查",
+          "text": "入口、焦点和阅读方向是否立刻可见？图是否增加了正文没有表达的关系？",
+          "variant": "accent"
+        }
+      ],
+      "footer": "示例内容 · 非真实项目"
+    }
+  ]
+}

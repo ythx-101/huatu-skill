@@ -243,7 +243,7 @@ class CanvasTests(unittest.TestCase):
     def test_cover_layout_options_validate(self) -> None:
         spec = legacy_spec()
         spec["canvas"] = {"width": 1080, "height": 1080}
-        spec["slides"][0].update({"headerInset": 150, "hidePageNumber": True})
+        spec["slides"][0].update({"headerInset": 150, "displayScale": 1.4, "hidePageNumber": True})
         self.assertEqual(renderer.validate_spec(spec), [])
 
     def test_cover_layout_options_reject_bad_values(self) -> None:
@@ -251,6 +251,9 @@ class CanvasTests(unittest.TestCase):
             ("headerInset", -1),
             ("headerInset", 401),
             ("headerInset", "150"),
+            ("displayScale", 0.5),
+            ("displayScale", 2.5),
+            ("displayScale", "1.4"),
             ("hidePageNumber", "yes"),
         ):
             with self.subTest(key=key, value=value):
@@ -362,6 +365,69 @@ class DiagnosticsTests(unittest.TestCase):
         html = renderer.build_html(SKILL_DIR / "assets" / "carousel-template.html", spec)
         self.assertNotIn("</script><script>alert(1)</script>", html)
         self.assertIn("\\u003c/script>", html)
+
+
+class ManifestEvidenceTests(unittest.TestCase):
+    """Phase B: manifest 理解证据缺失（占位/空壳文字）→ spec 错误。"""
+
+    def test_meaningful_manifest_passes_placeholder_probe(self) -> None:
+        self.assertEqual(renderer.validate_spec(interpreted_spec()), [])
+
+    def test_manifest_placeholder_thesis_is_spec_error(self) -> None:
+        spec = interpreted_spec()
+        spec["designManifest"]["visualThesis"] = "TBD"
+        errors = renderer.validate_spec(spec)
+        self.assertTrue(
+            any("designManifest.visualThesis" in error and "placeholder" in error for error in errors), errors
+        )
+
+    def test_manifest_composition_intent_placeholder_is_spec_error(self) -> None:
+        spec = interpreted_spec()
+        spec["designManifest"]["compositionIntent"][0] = "占位"
+        errors = renderer.validate_spec(spec)
+        self.assertTrue(
+            any("designManifest.compositionIntent[0]" in error and "placeholder" in error for error in errors), errors
+        )
+
+    def test_manifest_placeholder_motif_is_spec_error(self) -> None:
+        spec = interpreted_spec()
+        spec["designManifest"]["motifs"][0] = "xxx"
+        errors = renderer.validate_spec(spec)
+        self.assertTrue(
+            any("designManifest.motifs[0]" in error and "placeholder" in error for error in errors), errors
+        )
+
+    def test_manifest_degenerate_ellipsis_is_spec_error(self) -> None:
+        spec = interpreted_spec()
+        spec["designManifest"]["semanticMetaphor"] = "..."
+        errors = renderer.validate_spec(spec)
+        self.assertTrue(
+            any("designManifest.semanticMetaphor" in error and "placeholder" in error for error in errors), errors
+        )
+
+    def test_manifest_placeholder_avoid_list_item_is_spec_error(self) -> None:
+        spec = interpreted_spec()
+        spec["designManifest"]["avoidList"] = ["占位"]
+        errors = renderer.validate_spec(spec)
+        self.assertTrue(
+            any("designManifest.avoidList[0]" in error and "placeholder" in error for error in errors), errors
+        )
+
+    def test_manifest_placeholder_material_system_is_spec_error(self) -> None:
+        spec = interpreted_spec()
+        spec["designManifest"]["materialSystem"] = ["TBD"]
+        errors = renderer.validate_spec(spec)
+        self.assertTrue(
+            any("designManifest.materialSystem[0]" in error and "placeholder" in error for error in errors), errors
+        )
+
+    def test_manifest_placeholder_image_cadence_is_spec_error(self) -> None:
+        spec = interpreted_spec()
+        spec["designManifest"]["imageCadence"] = "xxx"
+        errors = renderer.validate_spec(spec)
+        self.assertTrue(
+            any("designManifest.imageCadence" in error and "placeholder" in error for error in errors), errors
+        )
 
 
 if __name__ == "__main__":

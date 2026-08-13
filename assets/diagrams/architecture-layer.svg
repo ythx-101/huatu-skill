@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 720" role="img" aria-labelledby="title desc">
+  <title id="title">纵向架构分层模板</title>
+  <desc id="desc">能力层、编排层和基础层自上而下排列，核心编排节点连接上下层。</desc>
+  <style>
+    svg { background: #f5f4ed; }
+    text { font-family: "Source Han Serif SC", "Songti SC", serif; }
+    .label { font-family: "JetBrains Mono", "SF Mono", monospace; letter-spacing: 1px; }
+  </style>
+  <path d="M0 0H1080V720H0Z" fill="#f5f4ed"/>
+  <path d="M48 72H1032" fill="none" stroke="#E5E3D8" stroke-width="1"/>
+
+  <!-- layer fields use paths so every rect remains a budgeted node -->
+  <path d="M80 112H1000V264H80Z" fill="#faf9f5" stroke="#E8E6DC" stroke-width="1"/>
+  <path d="M80 284H1000V436H80Z" fill="#EEF2F7" stroke="#E8E6DC" stroke-width="1"/>
+  <path d="M80 456H1000V608H80Z" fill="#faf9f5" stroke="#E8E6DC" stroke-width="1"/>
+
+  <!-- DATA START -->
+  <text x="104" y="140" fill="#6b6a64" font-size="7" class="label">能力层</text>
+  <text x="104" y="312" fill="#1B365D" font-size="7" class="label">编排层 · 焦点</text>
+  <text x="104" y="484" fill="#6b6a64" font-size="7" class="label">基础层</text>
+
+  <path d="M404 208V316" fill="none" stroke="#504e49" stroke-width="2"/>
+  <path d="M396 308L404 316L412 308" fill="none" stroke="#504e49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M676 208V316" fill="none" stroke="#504e49" stroke-width="2"/>
+  <path d="M668 308L676 316L684 308" fill="none" stroke="#504e49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M460 380H620" fill="none" stroke="#1B365D" stroke-width="2"/>
+  <path d="M612 372L620 380L612 388" fill="none" stroke="#1B365D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M404 380V488" fill="none" stroke="#504e49" stroke-width="2"/>
+  <path d="M396 480L404 488L412 480" fill="none" stroke="#504e49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M676 380V488" fill="none" stroke="#504e49" stroke-width="2"/>
+  <path d="M668 480L676 488L684 480" fill="none" stroke="#504e49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="332" y="144" width="144" height="64" rx="8" fill="#faf9f5" stroke="#141413" stroke-width="2"/>
+  <text x="404" y="168" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">入口甲</text>
+  <text x="404" y="192" fill="#141413" font-size="12" text-anchor="middle">内容输入</text>
+
+  <rect x="604" y="144" width="144" height="64" rx="8" fill="#faf9f5" stroke="#141413" stroke-width="2"/>
+  <text x="676" y="168" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">入口乙</text>
+  <text x="676" y="192" fill="#141413" font-size="12" text-anchor="middle">规则输入</text>
+
+  <rect x="300" y="316" width="160" height="64" rx="8" fill="#EEF2F7" stroke="#1B365D" stroke-width="2"/>
+  <text x="380" y="340" fill="#1B365D" font-size="7" text-anchor="middle" class="label">核心</text>
+  <text x="380" y="364" fill="#141413" font-size="12" text-anchor="middle">规划与判断</text>
+
+  <rect x="620" y="316" width="160" height="64" rx="8" fill="#faf9f5" stroke="#504e49" stroke-width="2"/>
+  <text x="700" y="340" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">协同</text>
+  <text x="700" y="364" fill="#141413" font-size="12" text-anchor="middle">排序与交接</text>
+
+  <rect x="332" y="488" width="144" height="64" rx="8" fill="#faf9f5" stroke="#141413" stroke-width="2"/>
+  <text x="404" y="512" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">基础甲</text>
+  <text x="404" y="536" fill="#141413" font-size="12" text-anchor="middle">本地素材</text>
+
+  <rect x="604" y="488" width="144" height="64" rx="8" fill="#faf9f5" stroke="#141413" stroke-width="2"/>
+  <text x="676" y="512" fill="#6b6a64" font-size="7" text-anchor="middle" class="label">基础乙</text>
+  <text x="676" y="536" fill="#141413" font-size="12" text-anchor="middle">渲染输出</text>
+  <!-- DATA END -->
+
+  <text x="48" y="48" fill="#1B365D" font-size="9" class="label">ARCHITECTURE LAYER</text>
+  <text x="1032" y="48" fill="#6b6a64" font-size="9" text-anchor="end">每层回答一个系统问题</text>
+</svg>

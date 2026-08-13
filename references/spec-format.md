@@ -34,6 +34,9 @@ Per-slide layout options (all optional):
   header. Use on single-slide covers (e.g. a 1:1 square) to keep the title and
   core message inside the middle 60% of the canvas so feed cropping cannot
   hide them.
+- `displayScale`: number 1.0–2.0. Scales the poster title up for wide
+  canvases (e.g. a 1600×900 Twitter banner) so the headline keeps visual
+  impact; default `1` and unused by any other block.
 - `hidePageNumber`: boolean. Hides the `1/1` page counter for single-slide
   covers; defaults to `false`.
 
