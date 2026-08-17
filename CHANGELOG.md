@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.2.0] - 2026-08-17
+
+### 新增
+- 新增全流程成品状态：concept / draft / candidate / release / blocked，默认创作请求以可交付 PNG 为目标。
+- 新增 `references/delivery-standard.md`，明确 PNG 是最终产品、HTML 是确定性排版与预览层。
+- 新增 `scripts/check_delivery.py`，fail-closed 检查 PNG 数量与尺寸、结构 QA、人工视觉 PASS、reference-driven manifest 与源文件/渲染新鲜度。
+- 新增 delivery checker 与 diagram/chips 布局回归测试。
+
+### 修复
+- diagram 构图中的主 image 和 chips 改为跨全栏，防止机制图被压进半栏。
+- chips 固定从顶部排列，防止与高图同排时被拉伸成巨大空胶囊。
+- Delivery Check 报告只输出相对产物名，不再泄露调用者的绝对本地路径或用户名。
+
+### 变更
+- `SKILL.md` 强制执行真实渲染、逐页检查、最后修改后重新渲染，以及 release bundle 交付检查。
+- `--check-only` 明确降级为 schema preflight，不再允许被描述为成品完成。
+
 ## [2.1.0] - 2026-08-12
 
 ### 新增

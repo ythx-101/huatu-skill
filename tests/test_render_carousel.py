@@ -430,5 +430,21 @@ class ManifestEvidenceTests(unittest.TestCase):
         )
 
 
+class TemplateLayoutRegressionTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.template = (SKILL_DIR / "assets" / "carousel-template.html").read_text(encoding="utf-8")
+
+    def test_diagram_images_and_chips_span_the_full_grid(self) -> None:
+        self.assertRegex(
+            self.template,
+            r"\.composition-diagram\s+\.image-block,\s*\n\s*\.composition-diagram\s+\.chips\s*\{\s*\n\s*grid-column:\s*1\s*/\s*-1;",
+        )
+
+    def test_chips_do_not_stretch_to_match_tall_grid_siblings(self) -> None:
+        chips_rule = self.template.split("\n    .chips {", 1)[1].split("}", 1)[0]
+        self.assertIn("align-items: flex-start;", chips_rule)
+        self.assertIn("align-content: flex-start;", chips_rule)
+
+
 if __name__ == "__main__":
     unittest.main()

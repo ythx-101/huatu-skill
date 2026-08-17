@@ -7,6 +7,12 @@ description: Turn articles, research, notes, data, or existing drafts into clear
 
 Build a carousel that helps the reader understand the meaning — before it looks coherent, before it passes the rules. A deck succeeds when the layout itself makes a relationship, mechanism, or judgment easier to see than the text alone would. Treat model interpretation, information architecture, visual hierarchy, deterministic rendering, and visual QA as one workflow. Constraints are guardrails, not goals: they prevent accidents, but a content-specific visual thesis creates meaning. When a rule and the reader's comprehension conflict, the rule yields.
 
+## Deliver a product, not a demo
+
+The final product is the rendered image set. HTML is the deterministic layout and preview layer; JSON is the editable source. Unless the user explicitly asks for exploration, critique only, or a rough draft, the target state is **release**, not “valid spec” or “HTML generated.” Read [references/delivery-standard.md](references/delivery-standard.md) before creating or repairing a deck.
+
+Use state words precisely: `concept`, `draft`, `candidate`, `release`, or `blocked`. Never call a deck complete when browser rendering, final PNG inspection, or blocking-finding resolution is still pending. `--check-only` proves schema validity only. A render failure is `blocked`, not a license to hand off HTML/JSON as finished images.
+
 ## Choose the task path
 
 - For 知识型、机制型或研究型内容，默认选择 `mixed`（图文交替），并同时阅读 [references/image-led-design.md](references/image-led-design.md) 与 [references/diagram-system.md](references/diagram-system.md)；只有用户显式要求全文字时才选择 `editorial`。
@@ -15,7 +21,7 @@ Build a carousel that helps the reader understand the meaning — before it look
 - For existing images, inspect every image first. Diagnose hierarchy, spacing, contrast, consistency, clipping, and sequence before rebuilding.
 - For a critique-only request, stop after the annotated diagnosis and prioritized fixes. Do not render unless requested.
 
-Read [references/content-blueprints.md](references/content-blueprints.md) when deciding the story sequence. For reference-driven or visually ambitious work, read [references/model-interpretation.md](references/model-interpretation.md) and write the design manifest before styling. When photographs, illustrations, collage, expressive objects, or material texture could carry meaning, also read [references/image-led-design.md](references/image-led-design.md). Read [references/kami-design.md](references/kami-design.md) (默认主题 v2.0 法则与 tokens), [references/design-contract.md](references/design-contract.md), [references/layout-system.md](references/layout-system.md), and [references/visual-qa-rubric.md](references/visual-qa-rubric.md) before choosing styles or doing visual QA. Read [references/spec-format.md](references/spec-format.md) before writing a render spec.
+Read [references/content-blueprints.md](references/content-blueprints.md) when deciding the story sequence. For reference-driven or visually ambitious work, read [references/model-interpretation.md](references/model-interpretation.md) and write the design manifest before styling. When photographs, illustrations, collage, expressive objects, or material texture could carry meaning, also read [references/image-led-design.md](references/image-led-design.md). Read [references/kami-design.md](references/kami-design.md) (默认主题 v2.0 法则与 tokens), [references/design-contract.md](references/design-contract.md), [references/layout-system.md](references/layout-system.md), [references/visual-qa-rubric.md](references/visual-qa-rubric.md), and [references/delivery-standard.md](references/delivery-standard.md) before choosing styles or doing visual QA. Read [references/spec-format.md](references/spec-format.md) before writing a render spec.
 
 ## 1. Establish the content contract
 
@@ -75,7 +81,7 @@ Before a full deck, create three two-page directions that differ in interpretati
 python3 <skill-dir>/scripts/compare_directions.py direction-a.json direction-b.json direction-c.json
 ```
 
-If comparison reports `distinct: false`, revise the concepts or compositions before asking the human to choose a direction.
+If comparison reports `distinct: false`, revise the concepts or compositions before asking the human to choose a direction. As soon as a direction is selected, perform a real browser render of its two-page candidate. This is the runtime smoke test: discover missing Playwright/Chromium or broken local assets before writing the entire deck. If the smoke render cannot run, mark the release path `blocked` and report the exact prerequisite.
 
 ## 4. Apply a bounded visual system
 
@@ -143,11 +149,11 @@ The renderer writes:
 
 For interpreted decks, it also compares a non-sensitive visual fingerprint with the most recent five entries in `design-history.jsonl` beside the spec. This produces a review warning rather than prohibiting justified reuse. Pass `--no-history` only for fixtures or reproducible tests.
 
-If Playwright or a Chromium browser is unavailable, report the exact missing prerequisite. Do not silently replace the renderer with AI-generated text images.
+If Playwright or a Chromium browser is unavailable, report the exact missing prerequisite and mark the release `blocked`. Do not silently replace the renderer with AI-generated text images, and do not present HTML/JSON as the finished image product.
 
 ## 7. Perform visual QA
 
-Read `qa.json`, then inspect the rendered PNGs visually. For a deck of ten pages or fewer, inspect every page. At minimum verify:
+Read `qa.json`, then inspect the rendered PNGs visually. For a deck of ten pages or fewer, inspect every page. Review the PNGs before reading the manifest or author rationale. At minimum verify:
 
 Comprehension probes come first — each is blocking, with the same weight as overflow:
 
@@ -179,15 +185,29 @@ Diagram budget conformance is suggested, not blocking: `references/diagram-syste
 
 Read the three statuses separately: `structurally_valid` means the page did not break; `veg_review_required` remains true until review; `visually_approved` is never granted by the renderer. Do not accept a deck that merely passes overflow checks. Visual balance, awkward orphan lines, misleading emphasis, and a manifest that the render fails to express still require judgment. Revise the JSON and rerender until both automated and visual checks pass.
 
-## 8. Deliver the working set
+After the last content, SVG, theme, or layout change, rerender the whole deck and inspect every PNG again. Write `qa-summary.md` using the review contract. A previous PASS becomes stale as soon as any source changes.
+
+## 8. Deliver the release bundle
+
+Run the fail-closed delivery gate after final visual QA:
+
+```bash
+python3 <skill-dir>/scripts/check_delivery.py carousel.json \
+  --output-dir rendered \
+  --qa-summary qa-summary.md
+```
+
+Do not report `release` unless it exits `0` with `release_ready: true`. Otherwise report `blocked` or `candidate` and name the exact unmet gate.
 
 Return:
 
+- release state (`release`, `candidate`, or `blocked`);
 - the storyboard;
-- the editable JSON spec;
-- the rendered PNG directory;
-- a concise QA summary;
-- the design manifest and any recent-similarity warning;
+- the editable JSON spec and local source assets;
+- the HTML preview as the deterministic rendering layer;
+- the rendered PNG directory as the final product;
+- `qa.json`, `qa-summary.md`, and the delivery-check result;
+- the design manifest and any reviewed recent-similarity warning;
 - optional post caption and hashtags only when requested.
 
 Keep publishing separate. Uploading or posting to Xiaohongshu is an external action and requires explicit authorization at action time.

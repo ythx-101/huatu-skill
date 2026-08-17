@@ -1,4 +1,4 @@
 interface:
   display_name: "画图 Skill"
   short_description: "把文章与素材编排成有人文感、可验证、可复用的小红书图文"
-  default_prompt: "使用 $huatu-skill 把这篇内容编排成 9 页小红书图文，并渲染后检查溢出与视觉节奏。"
+  default_prompt: "使用 $huatu-skill 把这篇内容编排成 9 页小红书图文；真实渲染全部 PNG，逐页视觉复核，并通过 delivery checker 后再交付。"

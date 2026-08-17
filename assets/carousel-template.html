@@ -108,6 +108,11 @@
       grid-column: 1 / -1;
     }
 
+    .composition-diagram .image-block,
+    .composition-diagram .chips {
+      grid-column: 1 / -1;
+    }
+
     .composition-diagram .metric,
     .composition-diagram .compare-card,
     .composition-diagram .step {
@@ -549,6 +554,8 @@
     .chips {
       display: flex;
       flex-wrap: wrap;
+      align-items: flex-start;
+      align-content: flex-start;
       gap: 12px;
     }
 
