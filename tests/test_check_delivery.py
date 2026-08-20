@@ -8,23 +8,37 @@ import sys
 import tempfile
 import time
 import unittest
+import zlib
 from pathlib import Path
 
 
 SKILL_DIR = Path(__file__).resolve().parents[1]
 CHECKER = SKILL_DIR / "scripts" / "check_delivery.py"
+PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
 
-def write_png_header(path: Path, width: int = 1080, height: int = 1350) -> None:
-    """Write the bytes needed by the delivery checker's PNG IHDR probe."""
+def png_chunk(chunk_type: bytes, data: bytes) -> bytes:
+    crc = zlib.crc32(chunk_type)
+    crc = zlib.crc32(data, crc) & 0xFFFFFFFF
+    return struct.pack(">I", len(data)) + chunk_type + data + struct.pack(">I", crc)
+
+
+def write_png(path: Path, width: int = 1080, height: int = 1350) -> None:
+    """Write a small but fully valid 1-bit grayscale PNG at the requested size."""
+    ihdr = struct.pack(">IIBBBBB", width, height, 1, 0, 0, 0, 0)
+    row = b"\x00" + bytes((width + 7) // 8)
+    image_data = zlib.compress(row * height)
     path.write_bytes(
-        b"\x89PNG\r\n\x1a\n"
-        + struct.pack(">I", 13)
-        + b"IHDR"
-        + struct.pack(">II", width, height)
-        + b"\x08\x02\x00\x00\x00"
-        + b"\x00\x00\x00\x00"
+        PNG_SIGNATURE
+        + png_chunk(b"IHDR", ihdr)
+        + png_chunk(b"IDAT", image_data)
+        + png_chunk(b"IEND", b"")
     )
+
+
+def write_truncated_png(path: Path, width: int = 1080, height: int = 1350) -> None:
+    ihdr = struct.pack(">IIBBBBB", width, height, 1, 0, 0, 0, 0)
+    path.write_bytes(PNG_SIGNATURE + png_chunk(b"IHDR", ihdr))
 
 
 class DeliveryCheckerTests(unittest.TestCase):
@@ -47,8 +61,8 @@ class DeliveryCheckerTests(unittest.TestCase):
         output = root / "rendered"
         output.mkdir()
         (output / "carousel.html").write_text("<!doctype html><title>fixture</title>", encoding="utf-8")
-        write_png_header(output / "slide-01.png")
-        write_png_header(output / "slide-02.png")
+        write_png(output / "slide-01.png")
+        write_png(output / "slide-02.png")
         qa = {
             "valid": True,
             "structurally_valid": True,
@@ -109,6 +123,56 @@ class DeliveryCheckerTests(unittest.TestCase):
         self.assertFalse(payload["release_ready"])
         self.assertTrue(any("slide-02.png" in error for error in payload["errors"]), payload)
 
+    def test_truncated_png_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_name:
+            spec, output, qa_summary = self.make_bundle(Path(temp_name))
+            write_truncated_png(output / "slide-01.png")
+            result, payload = self.run_checker(spec, output, qa_summary)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(payload["release_ready"])
+        self.assertTrue(
+            any("Invalid rendered PNG slide-01.png" in error for error in payload["errors"]),
+            payload,
+        )
+
+    def test_missing_source_asset_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_name:
+            spec, output, qa_summary = self.make_bundle(Path(temp_name))
+            payload_spec = json.loads(spec.read_text(encoding="utf-8"))
+            payload_spec["slides"][0]["blocks"].append(
+                {"type": "image", "src": "assets/missing.png"}
+            )
+            spec.write_text(json.dumps(payload_spec), encoding="utf-8")
+            source_time = time.time() - 20
+            os.utime(spec, (source_time, source_time))
+            result, payload = self.run_checker(spec, output, qa_summary)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(payload["release_ready"])
+        self.assertTrue(
+            any("Missing local source asset: assets/missing.png" in error for error in payload["errors"]),
+            payload,
+        )
+
+    def test_existing_source_asset_is_checked(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_name:
+            root = Path(temp_name)
+            spec, output, qa_summary = self.make_bundle(root)
+            asset_dir = root / "assets"
+            asset_dir.mkdir()
+            asset = asset_dir / "diagram.svg"
+            asset.write_text("<svg xmlns='http://www.w3.org/2000/svg'/>", encoding="utf-8")
+            payload_spec = json.loads(spec.read_text(encoding="utf-8"))
+            payload_spec["slides"][0]["blocks"].append(
+                {"type": "image", "src": "assets/diagram.svg"}
+            )
+            spec.write_text(json.dumps(payload_spec), encoding="utf-8")
+            source_time = time.time() - 20
+            os.utime(spec, (source_time, source_time))
+            os.utime(asset, (source_time, source_time))
+            result, payload = self.run_checker(spec, output, qa_summary)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(payload["evidence"]["sourcesChecked"], ["carousel.json", "assets/diagram.svg"])
+
     def test_report_does_not_disclose_absolute_paths(self) -> None:
         with tempfile.TemporaryDirectory() as temp_name:
             spec, output, qa_summary = self.make_bundle(Path(temp_name))
@@ -153,7 +217,7 @@ class DeliveryCheckerTests(unittest.TestCase):
     def test_wrong_png_dimensions_fail_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temp_name:
             spec, output, qa_summary = self.make_bundle(Path(temp_name))
-            write_png_header(output / "slide-01.png", 900, 1350)
+            write_png(output / "slide-01.png", 900, 1350)
             result, payload = self.run_checker(spec, output, qa_summary)
         self.assertNotEqual(result.returncode, 0)
         self.assertTrue(any("900x1350" in error for error in payload["errors"]), payload)
