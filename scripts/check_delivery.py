@@ -2,8 +2,8 @@
 """Fail-closed release check for huatu render bundles.
 
 This script does not judge aesthetics. It verifies that a claimed release has
-fresh rendered artifacts, structurally valid QA, correct PNG dimensions, and a
-human-authored visual review marked PASS with no blocking findings.
+fresh rendered artifacts, structurally valid QA, structurally complete PNGs,
+and a human-authored visual review marked PASS with no blocking findings.
 """
 
 from __future__ import annotations
@@ -13,6 +13,7 @@ import json
 import re
 import struct
 import sys
+import zlib
 from pathlib import Path
 from typing import Any
 
@@ -20,6 +21,23 @@ from typing import Any
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 SLIDE_PATTERN = re.compile(r"^slide-(\d{2})\.png$")
 SECTION_PATTERN = re.compile(r"(?m)^([A-Z][A-Z_ ]+):\s*(.*)$")
+PNG_CHANNELS = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}
+PNG_ALLOWED_BIT_DEPTHS = {
+    0: {1, 2, 4, 8, 16},
+    2: {8, 16},
+    3: {1, 2, 4, 8},
+    4: {8, 16},
+    6: {8, 16},
+}
+ADAM7_PASSES = (
+    (0, 0, 8, 8),
+    (4, 0, 8, 8),
+    (0, 4, 4, 8),
+    (2, 0, 4, 4),
+    (0, 2, 2, 4),
+    (1, 0, 2, 2),
+    (0, 1, 1, 2),
+)
 
 
 def load_json(path: Path, label: str, errors: list[str]) -> dict[str, Any] | None:
@@ -59,12 +77,174 @@ def safe_artifact_name(path: Path, output_dir: Path) -> str:
         return path.name
 
 
+def _pass_extent(size: int, start: int, step: int) -> int:
+    if size <= start:
+        return 0
+    return (size - start + step - 1) // step
+
+
+def _expected_png_scanline_bytes(
+    width: int,
+    height: int,
+    bit_depth: int,
+    color_type: int,
+    interlace: int,
+) -> int:
+    channels = PNG_CHANNELS.get(color_type)
+    if channels is None or bit_depth not in PNG_ALLOWED_BIT_DEPTHS[color_type]:
+        raise ValueError(f"unsupported PNG color type/bit depth: {color_type}/{bit_depth}")
+    bits_per_pixel = channels * bit_depth
+
+    def pass_bytes(pass_width: int, pass_height: int) -> int:
+        if pass_width == 0 or pass_height == 0:
+            return 0
+        row_bytes = (pass_width * bits_per_pixel + 7) // 8
+        return pass_height * (row_bytes + 1)  # one filter byte per scanline
+
+    if interlace == 0:
+        return pass_bytes(width, height)
+    return sum(
+        pass_bytes(
+            _pass_extent(width, x_start, x_step),
+            _pass_extent(height, y_start, y_step),
+        )
+        for x_start, y_start, x_step, y_step in ADAM7_PASSES
+    )
+
+
+def _feed_png_data(
+    decoder: zlib.Decompress,
+    data: bytes,
+    decompressed: int,
+    expected: int,
+) -> int:
+    pending = data
+    while pending:
+        limit = max(1, expected - decompressed + 1)
+        try:
+            output = decoder.decompress(pending, limit)
+        except zlib.error as exc:
+            raise ValueError(f"invalid IDAT zlib stream: {exc}") from exc
+        decompressed += len(output)
+        if decompressed > expected:
+            raise ValueError("IDAT expands beyond the dimensions declared by IHDR")
+        next_pending = decoder.unconsumed_tail
+        if next_pending == pending:
+            raise ValueError("IDAT decompressor made no progress")
+        pending = next_pending
+    return decompressed
+
+
 def png_dimensions(path: Path) -> tuple[int, int]:
+    """Validate a complete PNG stream and return its declared dimensions."""
     with path.open("rb") as handle:
-        header = handle.read(24)
-    if len(header) < 24 or header[:8] != PNG_SIGNATURE or header[12:16] != b"IHDR":
-        raise ValueError("not a PNG with an IHDR header")
-    return struct.unpack(">II", header[16:24])
+        if handle.read(len(PNG_SIGNATURE)) != PNG_SIGNATURE:
+            raise ValueError("invalid PNG signature")
+
+        width = height = expected_scanline_bytes = None
+        decoder: zlib.Decompress | None = None
+        decompressed = 0
+        seen_ihdr = False
+        seen_idat = False
+        seen_iend = False
+        idat_finished = False
+
+        while not seen_iend:
+            length_bytes = handle.read(4)
+            if len(length_bytes) != 4:
+                raise ValueError("truncated PNG before IEND")
+            length = struct.unpack(">I", length_bytes)[0]
+            chunk_type = handle.read(4)
+            if len(chunk_type) != 4:
+                raise ValueError("truncated PNG chunk type")
+            data = handle.read(length)
+            crc_bytes = handle.read(4)
+            if len(data) != length or len(crc_bytes) != 4:
+                raise ValueError(f"truncated {chunk_type.decode('ascii', 'replace')} chunk")
+
+            actual_crc = struct.unpack(">I", crc_bytes)[0]
+            expected_crc = zlib.crc32(chunk_type)
+            expected_crc = zlib.crc32(data, expected_crc) & 0xFFFFFFFF
+            if actual_crc != expected_crc:
+                raise ValueError(f"CRC mismatch in {chunk_type.decode('ascii', 'replace')} chunk")
+
+            if not seen_ihdr and chunk_type != b"IHDR":
+                raise ValueError("IHDR must be the first PNG chunk")
+
+            if chunk_type == b"IHDR":
+                if seen_ihdr or length != 13:
+                    raise ValueError("PNG must contain exactly one 13-byte IHDR chunk")
+                (
+                    width,
+                    height,
+                    bit_depth,
+                    color_type,
+                    compression_method,
+                    filter_method,
+                    interlace,
+                ) = struct.unpack(">IIBBBBB", data)
+                if width == 0 or height == 0:
+                    raise ValueError("IHDR width and height must be positive")
+                if compression_method != 0 or filter_method != 0 or interlace not in {0, 1}:
+                    raise ValueError("unsupported PNG compression, filter, or interlace method")
+                expected_scanline_bytes = _expected_png_scanline_bytes(
+                    width,
+                    height,
+                    bit_depth,
+                    color_type,
+                    interlace,
+                )
+                seen_ihdr = True
+                continue
+
+            if chunk_type == b"IDAT":
+                if idat_finished:
+                    raise ValueError("IDAT chunks must be consecutive")
+                if decoder is None:
+                    decoder = zlib.decompressobj()
+                seen_idat = True
+                assert expected_scanline_bytes is not None
+                decompressed = _feed_png_data(
+                    decoder,
+                    data,
+                    decompressed,
+                    expected_scanline_bytes,
+                )
+                continue
+
+            if seen_idat:
+                idat_finished = True
+
+            if chunk_type == b"IEND":
+                if length != 0:
+                    raise ValueError("IEND must be empty")
+                if not seen_idat or decoder is None or expected_scanline_bytes is None:
+                    raise ValueError("PNG has no IDAT image data")
+                try:
+                    decompressed += len(decoder.flush())
+                except zlib.error as exc:
+                    raise ValueError(f"invalid IDAT zlib stream: {exc}") from exc
+                if decompressed > expected_scanline_bytes:
+                    raise ValueError("IDAT expands beyond the dimensions declared by IHDR")
+                if not decoder.eof:
+                    raise ValueError("truncated IDAT zlib stream")
+                if decoder.unused_data:
+                    raise ValueError("IDAT contains trailing compressed data")
+                if decompressed != expected_scanline_bytes:
+                    raise ValueError(
+                        "IDAT scanline byte count does not match the dimensions declared by IHDR"
+                    )
+                seen_iend = True
+                if handle.read(1):
+                    raise ValueError("unexpected data after IEND")
+                continue
+
+            # Unknown critical chunks are not valid in a baseline PNG stream.
+            if chunk_type[0] & 0x20 == 0 and chunk_type not in {b"PLTE"}:
+                raise ValueError(f"unknown critical PNG chunk: {chunk_type.decode('ascii', 'replace')}")
+
+    assert width is not None and height is not None
+    return width, height
 
 
 def canvas_dimensions(spec: dict[str, Any]) -> tuple[int, int]:
@@ -72,30 +252,42 @@ def canvas_dimensions(spec: dict[str, Any]) -> tuple[int, int]:
     if isinstance(canvas, dict):
         width = canvas.get("width")
         height = canvas.get("height")
-        if isinstance(width, int) and isinstance(height, int):
+        if isinstance(width, int) and height is not None and isinstance(height, int):
             return width, height
     return 1080, 1350
 
 
-def source_paths(spec: dict[str, Any], spec_path: Path) -> list[Path]:
+def source_paths(spec: dict[str, Any], spec_path: Path, errors: list[str]) -> list[Path]:
     sources = [spec_path]
     slides = spec.get("slides")
     if not isinstance(slides, list):
         return sources
-    for slide in slides:
+    for slide_index, slide in enumerate(slides):
         if not isinstance(slide, dict):
             continue
-        for block in slide.get("blocks", []):
+        blocks = slide.get("blocks", [])
+        if not isinstance(blocks, list):
+            continue
+        for block_index, block in enumerate(blocks):
             if not isinstance(block, dict) or block.get("type") != "image":
                 continue
             src = block.get("src")
-            if not isinstance(src, str) or "://" in src:
+            location = f"slides[{slide_index}].blocks[{block_index}].src"
+            if not isinstance(src, str) or not src.strip():
+                errors.append(f"Missing local source asset path at {location}")
+                continue
+            if "://" in src:
+                errors.append(f"Remote source asset is not allowed at {location}")
                 continue
             candidate = Path(src).expanduser()
             if not candidate.is_absolute():
                 candidate = spec_path.parent / candidate
-            if candidate.is_file():
-                sources.append(candidate.resolve())
+            candidate = candidate.resolve()
+            if not candidate.is_file():
+                errors.append(f"Missing local source asset: {safe_source_name(candidate, spec_path)}")
+                continue
+            if candidate not in sources:
+                sources.append(candidate)
     return sources
 
 
@@ -199,7 +391,7 @@ def check_delivery(spec_path: Path, output_dir: Path, qa_summary_path: Path) -> 
             if not blocking_is_none(blocking):
                 errors.append("Human visual QA must contain `BLOCKING: none` (or a section whose only item is none)")
 
-    sources = source_paths(spec, spec_path)
+    sources = source_paths(spec, spec_path, errors)
     newest_source = max((path.stat().st_mtime for path in sources), default=0)
     render_artifacts = [path for path in required + expected_slides if path.is_file()]
     stale_artifacts = [path.name for path in render_artifacts if path.stat().st_mtime + 1e-6 < newest_source]
