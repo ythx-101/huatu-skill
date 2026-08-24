@@ -1,6 +1,6 @@
 ---
 name: huatu-skill
-description: Turn articles, research, notes, data, or existing drafts into clear Xiaohongshu carousel storyboards and 1080×1350 image slides. Use when Codex needs to create, restructure, critique, or visually optimize 小红书图文、小红书轮播图、信息卡片、知识型笔记、研究型长图, including converting long-form content into 6–10 slides, improving an existing slide set, rendering local PNGs, or checking typography, density, hierarchy, overflow, and factual/source presentation.
+description: Turn articles, research, notes, data, or existing drafts into clear Xiaohongshu carousel images or self-contained ELI5 visual explainer HTML. Use for 小红书图文、小红书轮播图、信息卡片、知识型笔记、研究型长图, responsive mechanism explainers, local PNG/HTML rendering, and checks for typography, hierarchy, overflow, sources, simplification boundaries, and safe self-contained delivery.
 ---
 
 # 画图 Skill
@@ -9,19 +9,35 @@ Build a carousel that helps the reader understand the meaning — before it look
 
 ## Deliver a product, not a demo
 
-The final product is the rendered image set. HTML is the deterministic layout and preview layer; JSON is the editable source. Unless the user explicitly asks for exploration, critique only, or a rough draft, the target state is **release**, not “valid spec” or “HTML generated.” Read [references/delivery-standard.md](references/delivery-standard.md) before creating or repairing a deck.
+Huatu has two product modes. In **carousel mode**, the final product is the rendered PNG set; HTML is the deterministic preview layer and JSON is the editable source. In **ELI5 HTML mode**, one self-contained responsive HTML file is the final product; browser screenshots and QA JSON are evidence. Neither mode may substitute a preflight result for the target artifact. Read [references/delivery-standard.md](references/delivery-standard.md) before creating or repairing either product.
 
-Use state words precisely: `concept`, `draft`, `candidate`, `release`, or `blocked`. Never call a deck complete when browser rendering, final PNG inspection, or blocking-finding resolution is still pending. `--check-only` proves schema validity only. A render failure is `blocked`, not a license to hand off HTML/JSON as finished images.
+Use state words precisely: `concept`, `draft`, `candidate`, `release`, or `blocked`. Never call work complete when browser rendering, target-artifact inspection, or blocking-finding resolution is still pending. `--check-only` proves static/schema validity only. A render failure is `blocked`, not a license to hand off an unverified artifact.
 
 ## Choose the task path
 
-- For 知识型、机制型或研究型内容，默认选择 `mixed`（图文交替），并同时阅读 [references/image-led-design.md](references/image-led-design.md) 与 [references/diagram-system.md](references/diagram-system.md)；只有用户显式要求全文字时才选择 `editorial`。
+- Choose **ELI5 HTML mode** when the user wants one responsive visual mechanism explainer rather than numbered carousel images. Read and follow [references/eli5-html-mode.md](references/eli5-html-mode.md), then use `assets/eli5-explainer-starter.html` and `scripts/check_explainer.py`. Do not apply the carousel JSON/render workflow to this mode.
+- Otherwise choose **carousel mode** and continue below. For 知识型、机制型或研究型内容，默认选择 `mixed`（图文交替），并同时阅读 [references/image-led-design.md](references/image-led-design.md) 与 [references/diagram-system.md](references/diagram-system.md)；只有用户显式要求全文字时才选择 `editorial`。
 - For source material or a long article, extract the thesis and build a slide-by-slide narrative.
 - For an existing outline or JSON spec, preserve the argument and improve page roles, density, and components.
 - For existing images, inspect every image first. Diagnose hierarchy, spacing, contrast, consistency, clipping, and sequence before rebuilding.
 - For a critique-only request, stop after the annotated diagnosis and prioritized fixes. Do not render unless requested.
 
 Read [references/content-blueprints.md](references/content-blueprints.md) when deciding the story sequence. For reference-driven or visually ambitious work, read [references/model-interpretation.md](references/model-interpretation.md) and write the design manifest before styling. When photographs, illustrations, collage, expressive objects, or material texture could carry meaning, also read [references/image-led-design.md](references/image-led-design.md). Read [references/kami-design.md](references/kami-design.md) (默认主题 v2.0 法则与 tokens), [references/design-contract.md](references/design-contract.md), [references/layout-system.md](references/layout-system.md), [references/visual-qa-rubric.md](references/visual-qa-rubric.md), and [references/delivery-standard.md](references/delivery-standard.md) before choosing styles or doing visual QA. Read [references/spec-format.md](references/spec-format.md) before writing a render spec.
+
+## ELI5 HTML path
+
+For this mode, create 3–7 semantic scenes with one concept and one dominant inline SVG/figure per scene. Keep copy short, name facts and sources, and include an explicit simplification boundary. The file must use inline CSS/SVG only: no JavaScript, remote dependency, analytics, request-capable resource, credential, private identifier, host secret, or QR code.
+
+Run static preflight, then real Chromium validation:
+
+```bash
+python3 <skill-dir>/scripts/check_explainer.py explainer.html --check-only
+python3 <skill-dir>/scripts/check_explainer.py explainer.html --output-dir explainer-qa
+```
+
+The browser run is mandatory and must pass at 390×844 and 1365×768, producing `qa.json`, `preview-mobile.png`, and `preview-desktop.png` with no unsafe request attempt, horizontal overflow, browser error, or visible text below 12px. Inspect the HTML and both full-page screenshots after the last change. Deliver HTML as the product and QA/screenshots as evidence. Moshi/iPhone preview and release approval remain parent/human-owned; never start a public or persistent preview server.
+
+The numbered workflow below is the carousel path.
 
 ## 1. Establish the content contract
 

@@ -1,6 +1,11 @@
 # Huatu delivery standard
 
-The product is the rendered image set. HTML is the deterministic layout, preview, and reproduction layer; JSON is the editable source. Neither HTML nor JSON alone is a finished image delivery.
+Huatu has two explicit products:
+
+- **Carousel:** the rendered PNG set is the product. HTML is the deterministic layout/preview layer and JSON is the editable source. Neither HTML nor JSON alone is a finished carousel delivery.
+- **ELI5 Visual Explainer:** one self-contained responsive HTML file is the product. `qa.json` and mobile/desktop screenshots are verification evidence, not substitutes for the HTML.
+
+Select the product mode before building; do not silently convert one into the other.
 
 ## Artifact states
 
@@ -12,7 +17,21 @@ The product is the rendered image set. HTML is the deterministic layout, preview
 
 Unless the user explicitly asks for exploration, critique only, or a rough draft, creation and repair requests target **release**.
 
-## Release definition of done
+## ELI5 explainer definition of done
+
+An explainer is mechanically release-ready only when all of the following are true:
+
+1. The final UTF-8 HTML contains 3–7 semantic scenes, one concept and visual teaching element per scene, explicit sources, and an explicit simplification boundary.
+2. It contains inline CSS/SVG only, with no JavaScript, remote/request-capable dependency, analytics, credential, token, host secret, private ID, or QR code.
+3. `check_explainer.py --check-only` passes as preflight.
+4. Real Chromium validation passes at 390×844 and 1365×768 and writes fresh `qa.json`, `preview-mobile.png`, and `preview-desktop.png`.
+5. QA reports `valid: true`, `browser_valid: true`, no unsafe request attempts, browser errors, horizontal overflow, or visible text below 12px; both screenshots are non-empty.
+6. A reviewer opens the HTML and inspects both screenshots after the last change for comprehension, reading order, clipping, density, source legibility, and visual teaching value.
+7. Any required Moshi/iPhone check is completed by the parent/release owner. Desktop Chromium evidence does not impersonate phone acceptance.
+
+Browser/dependency failure means **blocked**. `--check-only` is never final evidence. For the full content and preview procedure, read [eli5-html-mode.md](eli5-html-mode.md).
+
+## Carousel release definition of done
 
 A carousel is release-ready only when all of the following are true:
 
@@ -28,8 +47,8 @@ A warning may remain only when it is visually reviewed, explained in `qa-summary
 
 ## Fail-closed rules
 
-- Browser unavailable, Chromium crash, missing PNG, stale render, failed QA, or uninspected pages → **BLOCKED**, not release.
-- Never substitute `--check-only`, an HTML file, a design manifest, or a verbal description for the requested images.
+- Browser unavailable, Chromium crash, missing target artifact/evidence, stale render, failed QA, or uninspected output → **BLOCKED**, not release.
+- Never substitute `--check-only`, a design manifest, screenshots, or a verbal description for the requested product. Carousel HTML is not final PNG; explainer screenshots are not final HTML.
 - Never say “done” and then list rendering or inspection as future work.
 - Do not lower font size, hide overflow, or remove evidence merely to make automated QA green.
 - Do not grant yourself visual approval by editing renderer-owned `qa.json`; visual approval lives in the human-readable QA summary and delivery evidence.
@@ -48,16 +67,20 @@ If the visible product conflicts with the rationale, the product wins and must b
 
 ## Required release bundle
 
-- editable `carousel.json`;
-- local source assets used by the spec;
+Carousel:
+
+- editable `carousel.json` and local source assets;
 - `rendered/carousel.html` as editable preview;
 - `rendered/slide-01.png` … final numbered PNG;
-- `rendered/qa.json`;
-- `rendered/design-manifest.json` for reference-driven work;
-- `qa-summary.md` with the final visual verdict;
-- optional storyboard and publishing copy when requested.
+- `rendered/qa.json`, reference-driven `design-manifest.json`, and `qa-summary.md`.
 
-Publishing remains a separate human-authorized action.
+ELI5 explainer:
+
+- final self-contained `explainer.html`;
+- `qa.json`, `preview-mobile.png`, and `preview-desktop.png` from the final browser run;
+- human visual review evidence and optional parent-owned phone acceptance evidence.
+
+Publishing and public serving remain separate human-authorized actions.
 
 ## Delivery check
 

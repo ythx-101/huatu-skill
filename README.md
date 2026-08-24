@@ -1,8 +1,8 @@
 # 画图 Skill
 
-把文章、研究与灵感，变成有人文气息的小红书图文。
+把文章、研究与灵感，变成有人文气息的小红书图文或一页式视觉解释器。
 
-画图 Skill 是一个面向 Codex / Agent 的小红书视觉叙事 Skill。它不把内容机械塞进固定模板，而是先理解论点、关系与情绪，再决定每一页的角色、图像、留白和阅读节奏，最后输出可编辑的 JSON、HTML 预览、1080×1350 PNG 与 QA 报告。**PNG 图片是最终产品，HTML 是确定性排版与预览层；未真实渲染和逐页验收的内容不能称为成品。**
+画图 Skill 是一个面向 Codex / Agent 的视觉叙事 Skill。它先理解论点、关系与情绪，再选择两种产品路径之一：小红书轮播输出可编辑 JSON、HTML 预览、1080×1350 PNG 与 QA；ELI5 Visual Explainer 输出一个自包含响应式 HTML 与浏览器验证证据。**轮播的最终产品是 PNG；解释器的最终产品是 HTML。`--check-only` 对两者都只是预检**。
 
 > Constraints keep the page safe. Interpretation makes it meaningful.
 
@@ -17,7 +17,9 @@
 - 支持本地 PNG、JPEG、WebP、SVG，并赋予 hero、evidence、atmosphere 等语义角色
 - 检查溢出、低对比度、重复构图、弱图像节奏与近期设计相似度
 - 生成本地 HTML 预览和逐页 PNG，并用 fail-closed delivery checker 阻止缺图、陈旧渲染或 BLOCKED QA 被当成成品
-- 把最终审美判断与发布权留给人
+- 生成 3–7 幕、低文案、大视觉的 ELI5 HTML 解释器，明确来源与简化边界
+- 在真实 Chromium 的 390×844 与 1365×768 视口检查外部请求、横向溢出、小字和浏览器错误
+- 把最终审美判断、手机验收与发布权留给人
 
 ## 设计原则
 
@@ -45,9 +47,21 @@ git clone https://github.com/ythx-101/huatu-skill.git ~/.codex/skills/huatu-skil
 先提出三种真正不同的视觉方向，选择后再渲染；加入有语义作用的图像，最后检查每一页和整组节奏。
 ```
 
-Skill 会引导 Agent 完成：内容契约 → 分页叙事 → 视觉解释 → JSON spec → 本地渲染 → 自动检查 → 逐页视觉 QA → fail-closed 交付检查。
+Skill 会先选择产品模式。轮播路径完成：内容契约 → 分页叙事 → JSON spec → 本地渲染 → 逐页视觉 QA → fail-closed 交付检查。解释器路径完成：3–7 幕叙事 → 单幕单概念 → 自包含 HTML → 双视口 Chromium QA → 人工检查。
 
-## 本地渲染
+## ELI5 Visual Explainer
+
+从安全起始文件开始：
+
+```bash
+cp assets/eli5-explainer-starter.html explainer.html
+python3 scripts/check_explainer.py explainer.html --check-only
+python3 scripts/check_explainer.py explainer.html --output-dir explainer-qa
+```
+
+真实浏览器命令生成 `qa.json`、`preview-mobile.png` 和 `preview-desktop.png`。HTML 只允许内联 CSS/SVG；不允许 JavaScript、远程字体/CDN、分析代码、网络资源、凭据、私有标识或二维码。参见 `references/eli5-html-mode.md` 与可复现示例 `examples/eli5-moshi-hook.html`。
+
+## 轮播本地渲染
 
 先检查结构：
 
@@ -87,10 +101,11 @@ python3 scripts/check_delivery.py examples/mixed-carousel.json \
 ```text
 SKILL.md                      Skill 工作流
 agents/openai.yaml            Codex 展示信息
-assets/                       HTML 模板与起始 spec
+assets/                       轮播与 ELI5 HTML 起始模板
 references/                   叙事、构图、图像、交付与 QA 规范
-scripts/render_carousel.py    校验与渲染器
-scripts/check_delivery.py     成品包 fail-closed 交付检查
+scripts/render_carousel.py    轮播校验与渲染器
+scripts/check_delivery.py     轮播成品包 fail-closed 交付检查
+scripts/check_explainer.py    ELI5 HTML 静态与双视口浏览器检查
 scripts/compare_directions.py 候选方向差异检查
 tests/                        单元测试
 examples/                     可复现示例

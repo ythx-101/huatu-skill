@@ -1,4 +1,4 @@
 interface:
   display_name: "画图 Skill"
-  short_description: "把文章与素材编排成有人文感、可验证、可复用的小红书图文"
-  default_prompt: "使用 $huatu-skill 把这篇内容编排成 9 页小红书图文；真实渲染全部 PNG，逐页视觉复核，并通过 delivery checker 后再交付。"
+  short_description: "把内容做成可验证的小红书轮播或自包含 ELI5 视觉解释器"
+  default_prompt: "使用 $huatu-skill 先选择轮播或 ELI5 HTML 产品模式；完成真实浏览器渲染、目标视口 QA 与视觉复核后，再交付最终产品和验证证据。"

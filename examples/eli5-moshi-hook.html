@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Moshi Hook 是怎么向手机打招呼的？</title>
+  <style>
+    :root {
+      --night: #17283b;
+      --ink: #19232d;
+      --muted: #5d6871;
+      --paper: #f3f0e7;
+      --card: #fffdf8;
+      --blue: #28677d;
+      --cyan: #9edce0;
+      --peach: #f1bea7;
+      --line: #d6d1c5;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--paper); color: var(--ink); scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      font-family: ui-serif, "Songti SC", "STSong", Georgia, serif;
+      font-size: 17px;
+      line-height: 1.62;
+    }
+    header, main, footer { width: min(100% - 36px, 1160px); margin-inline: auto; }
+    header { position: relative; padding: clamp(66px, 10vw, 132px) 0 clamp(46px, 7vw, 86px); }
+    header::after { content: ""; display: block; width: 72px; height: 7px; margin-top: 32px; border-radius: 9px; background: var(--peach); }
+    .kicker, .scene-number, .label {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-weight: 750;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+    .kicker { color: var(--blue); font-size: 14px; }
+    h1 { max-width: 950px; margin: 14px 0 22px; font-size: clamp(43px, 7.6vw, 88px); line-height: 1.06; letter-spacing: -.05em; }
+    .lead { max-width: 650px; margin: 0; color: var(--muted); font-size: clamp(19px, 2.3vw, 25px); }
+    .scene {
+      display: grid;
+      grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+      gap: clamp(32px, 7vw, 96px);
+      align-items: center;
+      min-height: min(790px, 88vh);
+      padding: clamp(64px, 9vw, 112px) 0;
+      border-top: 1px solid var(--line);
+    }
+    .scene:nth-child(even) .scene-copy { order: 2; }
+    .scene:nth-child(even) figure { order: 1; }
+    .scene-copy { max-width: 430px; }
+    .scene-number { display: block; margin-bottom: 15px; color: var(--blue); font-size: 14px; }
+    h2 { margin: 0 0 18px; font-size: clamp(31px, 4.6vw, 54px); line-height: 1.13; letter-spacing: -.035em; }
+    .scene-copy p { margin: 0; color: var(--muted); font-size: clamp(17px, 1.6vw, 20px); }
+    .takeaway { display: inline-block; margin-top: 22px; padding: 8px 12px; border-radius: 10px; background: #e3edef; color: var(--night); font: 700 14px/1.4 ui-sans-serif, system-ui, sans-serif; }
+    figure { margin: 0; padding: clamp(18px, 3.5vw, 38px); border: 1px solid var(--line); border-radius: 32px; background: var(--card); box-shadow: 0 18px 50px rgba(23, 40, 59, .07); }
+    svg { display: block; width: 100%; height: auto; }
+    figcaption { margin-top: 17px; color: var(--muted); font-size: 14px; }
+    .boundary { margin: 44px 0 78px; padding: clamp(24px, 4vw, 40px); border: 1px solid #d9a88f; border-radius: 24px; background: #fae8dc; }
+    .boundary h2, footer h2 { margin: 0 0 10px; font-size: 25px; letter-spacing: -.01em; }
+    .boundary p { max-width: 860px; margin: 0; }
+    footer { padding: 40px 0 72px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+    footer ol { margin: 10px 0 0; padding-left: 22px; }
+    footer li + li { margin-top: 7px; }
+    .label { font-size: 14px; }
+    @media (max-width: 760px) {
+      header, main, footer { width: min(100% - 32px, 620px); }
+      header { padding-top: 58px; }
+      h1 { font-size: clamp(42px, 13vw, 58px); }
+      .scene { grid-template-columns: 1fr; min-height: auto; gap: 27px; padding: 62px 0; }
+      .scene:nth-child(even) .scene-copy, .scene:nth-child(even) figure { order: initial; }
+      .scene-copy { max-width: none; }
+      figure { padding: 17px; border-radius: 24px; }
+      .boundary { margin-bottom: 58px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="kicker">ELI5 · 五次接力</div>
+    <h1>Moshi Hook 是怎么向手机打招呼的？</h1>
+    <p class="lead">它不是抢走 Agent 的方向盘，而是在关键时刻，把一张“发生了什么”的小纸条递到手机边。</p>
+  </header>
+
+  <main>
+    <section class="scene" data-scene="1">
+      <div class="scene-copy">
+        <span class="scene-number">01 · 事件</span>
+        <h2>Agent 先走到一个生命周期节点</h2>
+        <p>任务开始、需要关注或完成时，会出现一个可被观察的事件。这里先有“发生”，还没有手机通知。</p>
+        <span class="takeaway">Agent lifecycle event</span>
+      </div>
+      <figure>
+        <svg role="img" aria-labelledby="event-title event-desc" viewBox="0 0 680 470">
+          <title id="event-title">Agent 生命周期中的事件节点</title>
+          <desc id="event-desc">一条任务轨道经过开始、运行、需要关注和完成节点，其中需要关注节点亮起。</desc>
+          <path d="M84 242H596" stroke="#d6d1c5" stroke-width="18" stroke-linecap="round"/>
+          <path d="M84 242H402" stroke="#28677d" stroke-width="10" stroke-linecap="round"/>
+          <circle cx="112" cy="242" r="28" fill="#28677d"/>
+          <circle cx="278" cy="242" r="28" fill="#28677d"/>
+          <circle cx="430" cy="242" r="56" fill="#f1bea7"/>
+          <circle cx="430" cy="242" r="25" fill="#17283b"/>
+          <circle cx="576" cy="242" r="28" fill="#fffdf8" stroke="#9b9b94" stroke-width="7"/>
+          <text x="112" y="315" text-anchor="middle" font-size="23" fill="#5d6871">开始</text>
+          <text x="278" y="315" text-anchor="middle" font-size="23" fill="#5d6871">运行</text>
+          <text x="430" y="333" text-anchor="middle" font-size="26" font-weight="700" fill="#17283b">需要关注</text>
+          <text x="576" y="315" text-anchor="middle" font-size="23" fill="#5d6871">完成</text>
+          <rect x="330" y="72" width="200" height="70" rx="20" fill="#17283b"/>
+          <text x="430" y="116" text-anchor="middle" font-size="25" fill="#fffdf8">一个事件亮起</text>
+          <path d="M430 142v42" stroke="#17283b" stroke-width="7" stroke-linecap="round"/>
+        </svg>
+        <figcaption>概念图：生命周期节点产生可观察事件，不代表某种特定回调协议。</figcaption>
+      </figure>
+    </section>
+
+    <section class="scene" data-scene="2">
+      <div class="scene-copy">
+        <span class="scene-number">02 · 本地接住</span>
+        <h2>Hook 在 Agent 旁边接住事件</h2>
+        <p>Hook 是本地交接点：它关注事件，并把适合通知的信息交给 Moshi。它不是手机，也不替 Agent 决策。</p>
+        <span class="takeaway">local Hook</span>
+      </div>
+      <figure>
+        <svg role="img" aria-labelledby="hook-title hook-desc" viewBox="0 0 680 470">
+          <title id="hook-title">本地 Hook 接住 Agent 事件</title>
+          <desc id="hook-desc">Agent 事件卡片落入旁边的 Hook 接力篮，再指向下一站。</desc>
+          <rect x="60" y="110" width="235" height="248" rx="34" fill="#e3edef"/>
+          <text x="177" y="160" text-anchor="middle" font-size="24" fill="#5d6871">Agent 本地</text>
+          <rect x="91" y="193" width="172" height="86" rx="22" fill="#17283b"/>
+          <text x="177" y="246" text-anchor="middle" font-size="27" fill="#fffdf8">事件</text>
+          <path d="M296 235h75" stroke="#28677d" stroke-width="9" stroke-linecap="round"/>
+          <path d="M351 214l24 21-24 21" fill="none" stroke="#28677d" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M397 147h210l-22 211H419z" fill="#fffdf8" stroke="#28677d" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M432 193h140" stroke="#9edce0" stroke-width="19" stroke-linecap="round"/>
+          <circle cx="502" cy="268" r="48" fill="#f1bea7"/>
+          <path d="M477 268l17 17 33-39" fill="none" stroke="#17283b" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="502" y="404" text-anchor="middle" font-size="27" font-weight="700" fill="#17283b">Local Hook</text>
+        </svg>
+        <figcaption>概念图：Hook 表示本地事件交接职责，不说明内部实现形式。</figcaption>
+      </figure>
+    </section>
+
+    <section class="scene" data-scene="3">
+      <div class="scene-copy">
+        <span class="scene-number">03 · 传递层</span>
+        <h2>Moshi 本地 daemon / Gateway 接过纸条</h2>
+        <p>这一层把本地交接变成 Moshi 可送达的访问与通知路径。它负责“怎么抵达”，不负责“任务接下来该做什么”。</p>
+        <span class="takeaway">local daemon / Gateway</span>
+      </div>
+      <figure>
+        <svg role="img" aria-labelledby="gateway-title gateway-desc" viewBox="0 0 680 470">
+          <title id="gateway-title">Hook 把信息交给 Moshi 本地传递层</title>
+          <desc id="gateway-desc">左侧 Hook 卡片通过一个本地门廊进入标有 Moshi daemon 和 Gateway 的传递区域。</desc>
+          <rect x="45" y="166" width="180" height="138" rx="28" fill="#17283b"/>
+          <text x="135" y="224" text-anchor="middle" font-size="25" fill="#fffdf8">Hook</text>
+          <text x="135" y="263" text-anchor="middle" font-size="21" fill="#9edce0">事件纸条</text>
+          <path d="M225 235h78" stroke="#28677d" stroke-width="9" stroke-linecap="round"/>
+          <path d="M283 214l24 21-24 21" fill="none" stroke="#28677d" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="322" y="73" width="313" height="324" rx="42" fill="#e3edef" stroke="#28677d" stroke-width="5"/>
+          <path d="M382 346V181c0-56 43-78 97-78s97 22 97 78v165" fill="none" stroke="#28677d" stroke-width="17" stroke-linecap="round"/>
+          <rect x="405" y="191" width="148" height="97" rx="24" fill="#fffdf8"/>
+          <text x="479" y="232" text-anchor="middle" font-size="24" fill="#17283b">Moshi</text>
+          <text x="479" y="264" text-anchor="middle" font-size="20" fill="#5d6871">daemon</text>
+          <rect x="398" y="310" width="162" height="62" rx="20" fill="#f1bea7"/>
+          <text x="479" y="350" text-anchor="middle" font-size="23" font-weight="700" fill="#17283b">Gateway</text>
+        </svg>
+        <figcaption>概念图：daemon / Gateway 合并画成一站；不主张具体网络协议或内部拓扑。</figcaption>
+      </figure>
+    </section>
+
+    <section class="scene" data-scene="4">
+      <div class="scene-copy">
+        <span class="scene-number">04 · 配对送达</span>
+        <h2>路径认得那台已经配对的手机</h2>
+        <p>Moshi 沿已建立的配对关系，把通知送向对应手机。图里只表达“有配对目标”，不承诺实时或必达。</p>
+        <span class="takeaway">paired phone delivery</span>
+      </div>
+      <figure>
+        <svg role="img" aria-labelledby="phone-title phone-desc" viewBox="0 0 680 470">
+          <title id="phone-title">Moshi 路径指向配对手机</title>
+          <desc id="phone-desc">左侧 Gateway 发出三段信号，进入右侧带配对标记的手机。</desc>
+          <rect x="48" y="158" width="187" height="154" rx="34" fill="#17283b"/>
+          <text x="141" y="225" text-anchor="middle" font-size="25" fill="#fffdf8">Moshi</text>
+          <text x="141" y="265" text-anchor="middle" font-size="21" fill="#9edce0">Gateway</text>
+          <path d="M265 276c54-70 111-70 165 0M282 237c42-51 86-51 128 0M304 200c27-31 56-31 84 0" fill="none" stroke="#28677d" stroke-width="10" stroke-linecap="round"/>
+          <circle cx="346" cy="310" r="13" fill="#28677d"/>
+          <rect x="445" y="53" width="180" height="364" rx="40" fill="#fffdf8" stroke="#17283b" stroke-width="8"/>
+          <rect x="474" y="106" width="122" height="204" rx="25" fill="#e3edef"/>
+          <circle cx="535" cy="184" r="43" fill="#f1bea7"/>
+          <path d="M512 185l16 16 31-37" fill="none" stroke="#17283b" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="535" y="267" text-anchor="middle" font-size="22" fill="#17283b">已配对</text>
+          <rect x="505" y="338" width="60" height="8" rx="4" fill="#17283b"/>
+        </svg>
+        <figcaption>概念图：配对表示选定送达对象；身份校验与传输细节刻意省略。</figcaption>
+      </figure>
+    </section>
+
+    <section class="scene" data-scene="5">
+      <div class="scene-copy">
+        <span class="scene-number">05 · 手机入口</span>
+        <h2>手机用三个入口，让你看见同一件事</h2>
+        <p>Inbox 适合回看，Live Activity 适合扫一眼状态，Chat View 适合继续交流。Moshi 打开入口；任务与会话的权威仍在 Herdr。</p>
+        <span class="takeaway">access layer ≠ session authority</span>
+      </div>
+      <figure>
+        <svg role="img" aria-labelledby="views-title views-desc" viewBox="0 0 680 470">
+          <title id="views-title">手机上的三个 Moshi 入口与 Herdr 权威边界</title>
+          <desc id="views-desc">上层是 Inbox、Live Activity、Chat View 三张入口卡，下层 Herdr 是会话权威底座。</desc>
+          <rect x="38" y="66" width="184" height="172" rx="28" fill="#e3edef"/>
+          <rect x="248" y="66" width="184" height="172" rx="28" fill="#e3edef"/>
+          <rect x="458" y="66" width="184" height="172" rx="28" fill="#e3edef"/>
+          <path d="M84 126h92v67H84zM84 126l46 36 46-36" fill="none" stroke="#28677d" stroke-width="7" stroke-linejoin="round"/>
+          <rect x="288" y="119" width="104" height="80" rx="21" fill="#fffdf8" stroke="#28677d" stroke-width="7"/>
+          <path d="M304 162h20l12-24 15 49 13-25h18" fill="none" stroke="#28677d" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M502 119h96v67h-49l-24 22v-22h-23z" fill="#fffdf8" stroke="#28677d" stroke-width="7" stroke-linejoin="round"/>
+          <text x="130" y="222" text-anchor="middle" font-size="21" fill="#17283b">Inbox</text>
+          <text x="340" y="222" text-anchor="middle" font-size="21" fill="#17283b">Live Activity</text>
+          <text x="550" y="222" text-anchor="middle" font-size="21" fill="#17283b">Chat View</text>
+          <path d="M130 250v47M340 250v47M550 250v47" stroke="#9b9b94" stroke-width="6" stroke-linecap="round"/>
+          <rect x="82" y="298" width="516" height="112" rx="30" fill="#17283b"/>
+          <text x="340" y="348" text-anchor="middle" font-size="28" fill="#fffdf8">Herdr · 会话权威</text>
+          <text x="340" y="384" text-anchor="middle" font-size="21" fill="#9edce0">任务状态与会话事实留在这里</text>
+        </svg>
+        <figcaption>概念图：Moshi 是访问／通知层；Herdr 保持任务与会话的权威。</figcaption>
+      </figure>
+    </section>
+
+    <aside class="boundary" id="simplification" data-simplification>
+      <h2>这张图故意简化了什么？</h2>
+      <p>箭头只表示概念上的责任交接，不是协议图。daemon 与 Gateway 被合并成一个教学场景；配对、身份、传输、重试、系统通知权限与时序细节均未展开。页面不声称实时、必达或某种加密实现。唯一必须保留的边界是：<strong>Herdr 是任务／会话权威；Moshi 是访问与通知层。</strong></p>
+    </aside>
+  </main>
+
+  <footer id="sources" data-sources>
+    <h2>信息来源</h2>
+    <ol>
+      <li>Huatu v2.3.0 ELI5 HTML 已批准实现说明，2026-08-24：示例指定的五段责任路径与本地、无网络依赖交付约束。</li>
+      <li>本示例任务事实约束，2026-08-24：Herdr 保持 session authority；Moshi 作为 access / notification layer。</li>
+      <li>视觉中的设备、纸条、门廊与无线波纹均为教学比喻，不是 Moshi 或 Herdr 的协议与部署文档。</li>
+    </ol>
+  </footer>
+</body>
+</html>
