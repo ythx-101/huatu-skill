@@ -33,6 +33,7 @@ LOADING_ATTRIBUTES = {
     "input": {"src"},
 }
 FORBIDDEN_ELEMENTS = {"script", "iframe", "frame", "frameset", "object", "embed", "link", "base", "form"}
+FORBIDDEN_MEDIA_ELEMENTS = {"audio", "video", "img", "picture", "source", "track"}
 VOID_ELEMENTS = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"}
 ACTIVE_URL_ATTRIBUTES = {"href", "xlink:href", "action", "formaction", "ping"}
 SECRET_PATTERNS = (
@@ -60,11 +61,11 @@ class ExplainerParser(HTMLParser):
         self.viewport_values: list[str] = []
         self.main_count = 0
         self.h1_count = 0
-        self.scene_depths: list[int] = []
+        self.scene_depths: list[tuple[str, int]] = []
         self.scenes: list[dict[str, Any]] = []
-        self.sources_depths: list[int] = []
+        self.sources_depths: list[tuple[str, int]] = []
         self.source_sections: list[dict[str, Any]] = []
-        self.simplification_depths: list[int] = []
+        self.simplification_depths: list[tuple[str, int]] = []
         self.simplification_sections: list[dict[str, Any]] = []
         self.style_chunks: list[str] = []
         self._in_style = 0
@@ -75,7 +76,8 @@ class ExplainerParser(HTMLParser):
 
     def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         self.handle_starttag(tag, attrs)
-        self.handle_endtag(tag)
+        if tag.lower() not in VOID_ELEMENTS:
+            self.handle_endtag(tag)
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         tag = tag.lower()
@@ -98,7 +100,7 @@ class ExplainerParser(HTMLParser):
         classes = set((attr_map.get("class") or "").split())
         is_scene = tag == "section" and ("scene" in classes or "data-scene" in attr_map)
         if is_scene:
-            self.scene_depths.append(depth)
+            self.scene_depths.append((tag, depth))
             self.scenes.append({"headings": 0, "visuals": 0, "text": []})
         if self.scene_depths:
             scene = self.scenes[-1]
@@ -111,13 +113,13 @@ class ExplainerParser(HTMLParser):
             "data-sources" in attr_map or attr_map.get("id", "").lower() == "sources"
         )
         if is_sources:
-            self.sources_depths.append(depth)
+            self.sources_depths.append((tag, depth))
             self.source_sections.append({"text": []})
         is_simplification = tag in {"section", "aside"} and (
             "data-simplification" in attr_map or attr_map.get("id", "").lower() == "simplification"
         )
         if is_simplification:
-            self.simplification_depths.append(depth)
+            self.simplification_depths.append((tag, depth))
             self.simplification_sections.append({"text": []})
 
     def handle_endtag(self, tag: str) -> None:
@@ -125,11 +127,11 @@ class ExplainerParser(HTMLParser):
         depth = len(self.stack)
         if tag == "style" and self._in_style:
             self._in_style -= 1
-        if self.scene_depths and depth == self.scene_depths[-1]:
+        if self.scene_depths and (tag, depth) == self.scene_depths[-1]:
             self.scene_depths.pop()
-        if self.sources_depths and depth == self.sources_depths[-1]:
+        if self.sources_depths and (tag, depth) == self.sources_depths[-1]:
             self.sources_depths.pop()
-        if self.simplification_depths and depth == self.simplification_depths[-1]:
+        if self.simplification_depths and (tag, depth) == self.simplification_depths[-1]:
             self.simplification_depths.pop()
         if tag in self.stack:
             while self.stack:
@@ -204,6 +206,8 @@ def validate_html_text(text: str) -> tuple[list[str], dict[str, Any]]:
     for tag, attrs in parser.tags:
         if tag in FORBIDDEN_ELEMENTS:
             errors.append(f"Forbidden active/external element: <{tag}>")
+        if tag in FORBIDDEN_MEDIA_ELEMENTS:
+            errors.append(f"Forbidden media element: <{tag}>")
         if tag == "meta" and (attrs.get("http-equiv") or "").lower() == "refresh":
             errors.append("Meta refresh is forbidden")
         for name, raw_value in attrs.items():
@@ -216,7 +220,8 @@ def validate_html_text(text: str) -> tuple[list[str], dict[str, Any]]:
                 errors.append(f"External-capable resource attribute is forbidden: <{tag} {name}>")
             if name in ACTIVE_URL_ATTRIBUTES and value and not value.lstrip().startswith("#"):
                 errors.append(f"Non-fragment navigation/resource URL is forbidden: <{tag} {name}>")
-            if _is_unsafe_url(value):
+            is_namespace_declaration = name == "xmlns" or name.startswith("xmlns:")
+            if not is_namespace_declaration and _is_unsafe_url(value):
                 errors.append(f"Unsafe URL scheme or remote reference in <{tag} {name}>")
         if tag == "svg":
             role = (attrs.get("role") or "").lower()
@@ -337,8 +342,18 @@ def _viewport_metrics(page: Any) -> dict[str, Any]:
             range.selectNodeContents(node);
             if (!Array.from(range.getClientRects()).some(rect => rect.width > 0 && rect.height > 0)) continue;
             const fontSize = parseFloat(style.fontSize);
-            if (fontSize < minimumTextSize) {
-              smallText.push({fontSize: Number(fontSize.toFixed(2)), text: text.slice(0, 80)});
+            let effectiveFontSize = fontSize;
+            if (parent.namespaceURI === 'http://www.w3.org/2000/svg' &&
+                typeof parent.getScreenCTM === 'function') {
+              const matrix = parent.getScreenCTM();
+              if (matrix) effectiveFontSize *= Math.hypot(matrix.c, matrix.d);
+            }
+            if (effectiveFontSize < minimumTextSize) {
+              smallText.push({
+                fontSize: Number(fontSize.toFixed(2)),
+                effectiveFontSize: Number(effectiveFontSize.toFixed(2)),
+                text: text.slice(0, 80)
+              });
               if (smallText.length >= 20) break;
             }
           }

@@ -20,7 +20,6 @@
     html { background: var(--paper); color: var(--ink); scroll-behavior: smooth; }
     body {
       margin: 0;
-      overflow-x: hidden;
       font-family: ui-serif, "Songti SC", "STSong", Georgia, serif;
       font-size: 17px;
       line-height: 1.62;
@@ -65,10 +64,13 @@
     .label { font-size: 14px; }
     @media (max-width: 760px) {
       header, main, footer { width: min(100% - 32px, 620px); }
-      header { padding-top: 58px; }
+      header { padding: 36px 0 28px; }
+      header::after { margin-top: 20px; }
       h1 { font-size: clamp(42px, 13vw, 58px); }
       .scene { grid-template-columns: 1fr; min-height: auto; gap: 27px; padding: 62px 0; }
-      .scene:nth-child(even) .scene-copy, .scene:nth-child(even) figure { order: initial; }
+      .scene:first-child { padding-top: 32px; }
+      .scene:nth-child(even) .scene-copy { order: initial; }
+      .scene:nth-child(even) figure, .scene:nth-child(odd) figure { order: -1; }
       .scene-copy { max-width: none; }
       figure { padding: 17px; border-radius: 24px; }
       .boundary { margin-bottom: 58px; }
@@ -102,12 +104,12 @@
           <circle cx="430" cy="242" r="56" fill="#f1bea7"/>
           <circle cx="430" cy="242" r="25" fill="#17283b"/>
           <circle cx="576" cy="242" r="28" fill="#fffdf8" stroke="#9b9b94" stroke-width="7"/>
-          <text x="112" y="315" text-anchor="middle" font-size="23" fill="#5d6871">开始</text>
-          <text x="278" y="315" text-anchor="middle" font-size="23" fill="#5d6871">运行</text>
+          <text x="112" y="315" text-anchor="middle" font-size="26" fill="#5d6871">开始</text>
+          <text x="278" y="315" text-anchor="middle" font-size="26" fill="#5d6871">运行</text>
           <text x="430" y="333" text-anchor="middle" font-size="26" font-weight="700" fill="#17283b">需要关注</text>
-          <text x="576" y="315" text-anchor="middle" font-size="23" fill="#5d6871">完成</text>
+          <text x="576" y="315" text-anchor="middle" font-size="26" fill="#5d6871">完成</text>
           <rect x="330" y="72" width="200" height="70" rx="20" fill="#17283b"/>
-          <text x="430" y="116" text-anchor="middle" font-size="25" fill="#fffdf8">一个事件亮起</text>
+          <text x="430" y="116" text-anchor="middle" font-size="26" fill="#fffdf8">一个事件亮起</text>
           <path d="M430 142v42" stroke="#17283b" stroke-width="7" stroke-linecap="round"/>
         </svg>
         <figcaption>概念图：生命周期节点产生可观察事件，不代表某种特定回调协议。</figcaption>
@@ -126,7 +128,7 @@
           <title id="hook-title">本地 Hook 接住 Agent 事件</title>
           <desc id="hook-desc">Agent 事件卡片落入旁边的 Hook 接力篮，再指向下一站。</desc>
           <rect x="60" y="110" width="235" height="248" rx="34" fill="#e3edef"/>
-          <text x="177" y="160" text-anchor="middle" font-size="24" fill="#5d6871">Agent 本地</text>
+          <text x="177" y="160" text-anchor="middle" font-size="26" fill="#5d6871">Agent 本地</text>
           <rect x="91" y="193" width="172" height="86" rx="22" fill="#17283b"/>
           <text x="177" y="246" text-anchor="middle" font-size="27" fill="#fffdf8">事件</text>
           <path d="M296 235h75" stroke="#28677d" stroke-width="9" stroke-linecap="round"/>
@@ -153,17 +155,17 @@
           <title id="gateway-title">Hook 把信息交给 Moshi 本地传递层</title>
           <desc id="gateway-desc">左侧 Hook 卡片通过一个本地门廊进入标有 Moshi daemon 和 Gateway 的传递区域。</desc>
           <rect x="45" y="166" width="180" height="138" rx="28" fill="#17283b"/>
-          <text x="135" y="224" text-anchor="middle" font-size="25" fill="#fffdf8">Hook</text>
-          <text x="135" y="263" text-anchor="middle" font-size="21" fill="#9edce0">事件纸条</text>
+          <text x="135" y="224" text-anchor="middle" font-size="26" fill="#fffdf8">Hook</text>
+          <text x="135" y="263" text-anchor="middle" font-size="26" fill="#9edce0">事件纸条</text>
           <path d="M225 235h78" stroke="#28677d" stroke-width="9" stroke-linecap="round"/>
           <path d="M283 214l24 21-24 21" fill="none" stroke="#28677d" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
           <rect x="322" y="73" width="313" height="324" rx="42" fill="#e3edef" stroke="#28677d" stroke-width="5"/>
           <path d="M382 346V181c0-56 43-78 97-78s97 22 97 78v165" fill="none" stroke="#28677d" stroke-width="17" stroke-linecap="round"/>
           <rect x="405" y="191" width="148" height="97" rx="24" fill="#fffdf8"/>
-          <text x="479" y="232" text-anchor="middle" font-size="24" fill="#17283b">Moshi</text>
-          <text x="479" y="264" text-anchor="middle" font-size="20" fill="#5d6871">daemon</text>
+          <text x="479" y="232" text-anchor="middle" font-size="26" fill="#17283b">Moshi</text>
+          <text x="479" y="264" text-anchor="middle" font-size="26" fill="#5d6871">daemon</text>
           <rect x="398" y="310" width="162" height="62" rx="20" fill="#f1bea7"/>
-          <text x="479" y="350" text-anchor="middle" font-size="23" font-weight="700" fill="#17283b">Gateway</text>
+          <text x="479" y="350" text-anchor="middle" font-size="26" font-weight="700" fill="#17283b">Gateway</text>
         </svg>
         <figcaption>概念图：daemon / Gateway 合并画成一站；不主张具体网络协议或内部拓扑。</figcaption>
       </figure>
@@ -181,15 +183,15 @@
           <title id="phone-title">Moshi 路径指向配对手机</title>
           <desc id="phone-desc">左侧 Gateway 发出三段信号，进入右侧带配对标记的手机。</desc>
           <rect x="48" y="158" width="187" height="154" rx="34" fill="#17283b"/>
-          <text x="141" y="225" text-anchor="middle" font-size="25" fill="#fffdf8">Moshi</text>
-          <text x="141" y="265" text-anchor="middle" font-size="21" fill="#9edce0">Gateway</text>
+          <text x="141" y="225" text-anchor="middle" font-size="26" fill="#fffdf8">Moshi</text>
+          <text x="141" y="265" text-anchor="middle" font-size="26" fill="#9edce0">Gateway</text>
           <path d="M265 276c54-70 111-70 165 0M282 237c42-51 86-51 128 0M304 200c27-31 56-31 84 0" fill="none" stroke="#28677d" stroke-width="10" stroke-linecap="round"/>
           <circle cx="346" cy="310" r="13" fill="#28677d"/>
           <rect x="445" y="53" width="180" height="364" rx="40" fill="#fffdf8" stroke="#17283b" stroke-width="8"/>
           <rect x="474" y="106" width="122" height="204" rx="25" fill="#e3edef"/>
           <circle cx="535" cy="184" r="43" fill="#f1bea7"/>
           <path d="M512 185l16 16 31-37" fill="none" stroke="#17283b" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-          <text x="535" y="267" text-anchor="middle" font-size="22" fill="#17283b">已配对</text>
+          <text x="535" y="267" text-anchor="middle" font-size="26" fill="#17283b">已配对</text>
           <rect x="505" y="338" width="60" height="8" rx="4" fill="#17283b"/>
         </svg>
         <figcaption>概念图：配对表示选定送达对象；身份校验与传输细节刻意省略。</figcaption>
@@ -214,13 +216,13 @@
           <rect x="288" y="119" width="104" height="80" rx="21" fill="#fffdf8" stroke="#28677d" stroke-width="7"/>
           <path d="M304 162h20l12-24 15 49 13-25h18" fill="none" stroke="#28677d" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M502 119h96v67h-49l-24 22v-22h-23z" fill="#fffdf8" stroke="#28677d" stroke-width="7" stroke-linejoin="round"/>
-          <text x="130" y="222" text-anchor="middle" font-size="21" fill="#17283b">Inbox</text>
-          <text x="340" y="222" text-anchor="middle" font-size="21" fill="#17283b">Live Activity</text>
-          <text x="550" y="222" text-anchor="middle" font-size="21" fill="#17283b">Chat View</text>
+          <text x="130" y="222" text-anchor="middle" font-size="26" fill="#17283b">Inbox</text>
+          <text x="340" y="222" text-anchor="middle" font-size="26" fill="#17283b">Live Activity</text>
+          <text x="550" y="222" text-anchor="middle" font-size="26" fill="#17283b">Chat View</text>
           <path d="M130 250v47M340 250v47M550 250v47" stroke="#9b9b94" stroke-width="6" stroke-linecap="round"/>
           <rect x="82" y="298" width="516" height="112" rx="30" fill="#17283b"/>
           <text x="340" y="348" text-anchor="middle" font-size="28" fill="#fffdf8">Herdr · 会话权威</text>
-          <text x="340" y="384" text-anchor="middle" font-size="21" fill="#9edce0">任务状态与会话事实留在这里</text>
+          <text x="340" y="384" text-anchor="middle" font-size="26" fill="#9edce0">任务状态与会话事实留在这里</text>
         </svg>
         <figcaption>概念图：Moshi 是访问／通知层；Herdr 保持任务与会话的权威。</figcaption>
       </figure>

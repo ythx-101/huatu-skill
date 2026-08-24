@@ -58,6 +58,15 @@ class StaticValidationTests(unittest.TestCase):
         self.assertTrue(facts["sourcesPresent"])
         self.assertTrue(facts["simplificationBoundaryPresent"])
 
+    def test_shipped_starter_and_example_pass_static_validation(self) -> None:
+        for relative_path in (
+            "assets/eli5-explainer-starter.html",
+            "examples/eli5-moshi-hook.html",
+        ):
+            with self.subTest(path=relative_path):
+                errors, _ = checker.validate_html_file(SKILL_DIR / relative_path)
+                self.assertEqual(errors, [])
+
     def test_remote_resource_is_rejected(self) -> None:
         html = valid_html().replace("</figure>", '<img src="https://example.com/a.png"></figure>', 1)
         errors, _ = checker.validate_html_text(html)
@@ -71,6 +80,37 @@ class StaticValidationTests(unittest.TestCase):
         errors, _ = checker.validate_html_text(html)
         self.assertTrue(any("<script>" in error for error in errors), errors)
         self.assertTrue(any("event handler" in error for error in errors), errors)
+
+    def test_source_less_media_elements_are_rejected(self) -> None:
+        snippets = {
+            "audio": "<audio></audio>",
+            "video": "<video></video>",
+            "img": "<img>",
+            "picture": "<picture></picture>",
+            "source": "<source>",
+            "track": "<track>",
+        }
+        for tag, snippet in snippets.items():
+            with self.subTest(tag=tag):
+                html = valid_html().replace("<figure>", f"<figure>{snippet}", 1)
+                errors, _ = checker.validate_html_text(html)
+                self.assertIn(f"Forbidden media element: <{tag}>", errors)
+
+    def test_svg_namespace_declarations_are_not_remote_resources(self) -> None:
+        html = valid_html().replace(
+            '<svg role="img"',
+            '<svg xmlns="http://www.w3.org/2000/svg" '
+            'xmlns:xlink="http://www.w3.org/1999/xlink" role="img"',
+            1,
+        )
+        errors, _ = checker.validate_html_text(html)
+        self.assertEqual(errors, [])
+
+    def test_self_closing_void_tag_does_not_end_scene_tracking(self) -> None:
+        html = valid_html().replace("<h2>概念 1</h2>", "<br/><h2>概念 1</h2>", 1)
+        errors, facts = checker.validate_html_text(html)
+        self.assertEqual(errors, [])
+        self.assertEqual(facts["sceneCount"], 3)
 
     def test_missing_semantic_sections_fail_closed(self) -> None:
         mutations = {
@@ -135,6 +175,48 @@ class StaticValidationTests(unittest.TestCase):
             )
         self.assertEqual(result.returncode, 2)
         self.assertFalse(json.loads(result.stdout)["valid"])
+
+
+class BrowserMetricsTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        try:
+            from playwright.sync_api import sync_playwright
+
+            cls.playwright = sync_playwright().start()
+            executable = checker.choose_browser(cls.playwright, None)
+            if executable is None:
+                raise unittest.SkipTest("No Chromium browser available for rendered SVG text test")
+            cls.browser = cls.playwright.chromium.launch(
+                executable_path=str(executable), headless=True
+            )
+        except unittest.SkipTest:
+            if hasattr(cls, "playwright"):
+                cls.playwright.stop()
+            raise
+        except Exception as exc:
+            if hasattr(cls, "playwright"):
+                cls.playwright.stop()
+            raise unittest.SkipTest(f"Chromium unavailable for rendered SVG text test: {exc}")
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.browser.close()
+        cls.playwright.stop()
+
+    def test_svg_text_uses_effective_size_after_viewbox_scaling(self) -> None:
+        page = self.browser.new_page(viewport={"width": 390, "height": 844})
+        try:
+            page.set_content(
+                '<!doctype html><body><svg width="200" viewBox="0 0 400 100">'
+                '<text x="0" y="40" font-size="20">scaled label</text></svg></body>'
+            )
+            metrics = checker._viewport_metrics(page)
+        finally:
+            page.close()
+        self.assertEqual(len(metrics["smallText"]), 1)
+        self.assertEqual(metrics["smallText"][0]["fontSize"], 20)
+        self.assertEqual(metrics["smallText"][0]["effectiveFontSize"], 10)
 
 
 if __name__ == "__main__":

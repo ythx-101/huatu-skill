@@ -213,7 +213,7 @@ python3 <skill-dir>/scripts/check_delivery.py carousel.json \
   --qa-summary qa-summary.md
 ```
 
-Do not report `release` unless it exits `0` with `release_ready: true`. Otherwise report `blocked` or `candidate` and name the exact unmet gate.
+Do not report a carousel `release` unless it exits `0` with `release_ready: true`. Otherwise report `blocked` or `candidate` and name the exact unmet gate.
 
 Return:
 

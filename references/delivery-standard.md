@@ -11,11 +11,12 @@ Select the product mode before building; do not silently convert one into the ot
 
 - **concept** — thesis, storyboard, or direction exploration; no production claim.
 - **draft** — editable spec or partial render; placeholders and known defects may remain.
-- **candidate** — all pages render and structural QA passes, but visual review or final fixes remain.
-- **release** — final PNGs are fresh, every page has been inspected, blocking findings are zero, and the delivery checker passes.
+- **candidate** — the selected product renders and structural QA passes, but visual review or final fixes remain.
+- **release (carousel)** — final PNGs are fresh, `check_delivery.py` passes, every page has been inspected, and blocking findings are zero.
+- **release (ELI5 explainer)** — the final self-contained HTML passes real-browser `check_explainer.py`, has fresh QA evidence and visual review, and has parent-owned phone acceptance when required.
 - **blocked** — a required render, dependency, permission, inspection, or verification step could not complete.
 
-Unless the user explicitly asks for exploration, critique only, or a rough draft, creation and repair requests target **release**.
+Unless the user explicitly asks for exploration, critique only, or a rough draft, creation and repair requests target the selected product's **release** criteria above.
 
 ## ELI5 explainer definition of done
 
