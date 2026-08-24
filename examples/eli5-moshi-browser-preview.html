@@ -196,34 +196,35 @@
         <span class="pill">端口策略 → 探测 → HTML</span>
       </div>
       <figure>
-        <svg role="img" aria-labelledby="filter-title filter-desc" viewBox="0 0 680 470">
+        <svg role="img" aria-labelledby="filter-title filter-desc" viewBox="0 0 680 620">
           <title id="filter-title">监听端口经过策略和内容类型筛选</title>
-          <desc id="filter-desc">多个回环端口先经过 scan-ports 策略，再经过 HTTP 内容类型漏斗，最后只留下 HTML 服务及其元数据。</desc>
-          <rect x="32" y="54" width="165" height="72" rx="22" fill="#ebe2d5"/>
-          <rect x="32" y="148" width="165" height="72" rx="22" fill="#ebe2d5"/>
-          <rect x="32" y="242" width="165" height="72" rx="22" fill="#ebe2d5"/>
-          <rect x="32" y="336" width="165" height="72" rx="22" fill="#ebe2d5"/>
-          <text x="114" y="99" text-anchor="middle" font-size="27" fill="#27212b">回环端口 A</text>
-          <text x="114" y="193" text-anchor="middle" font-size="27" fill="#27212b">回环端口 B</text>
-          <text x="114" y="287" text-anchor="middle" font-size="27" fill="#27212b">回环端口 C</text>
-          <text x="114" y="381" text-anchor="middle" font-size="27" fill="#27212b">回环端口 D</text>
-          <path d="M206 90h68M206 184h68M206 278h68M206 372h68" stroke="#a99f94" stroke-width="7" stroke-linecap="round"/>
-          <path d="M277 61h135l-34 134h-67z" fill="#e8ddf2" stroke="#7650a8" stroke-width="5" stroke-linejoin="round"/>
-          <text x="344" y="105" text-anchor="middle" font-size="26" font-weight="700" fill="#513477">scan-ports</text>
-          <text x="344" y="141" text-anchor="middle" font-size="26" fill="#665f68">策略</text>
-          <path d="M344 195v43" stroke="#7650a8" stroke-width="8" stroke-linecap="round"/>
-          <path d="M283 238h122l-29 116h-64z" fill="#dce9df" stroke="#567963" stroke-width="5" stroke-linejoin="round"/>
-          <text x="344" y="278" text-anchor="middle" font-size="26" font-weight="700" fill="#27212b">HTTP 探测</text>
-          <text x="344" y="316" text-anchor="middle" font-size="26" fill="#665f68">Content-Type</text>
-          <path d="M344 354v48" stroke="#567963" stroke-width="8" stroke-linecap="round"/>
-          <path d="M325 384l19 20 19-20" fill="none" stroke="#567963" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-          <rect x="434" y="96" width="216" height="278" rx="31" fill="#fffaf2" stroke="#567963" stroke-width="6"/>
-          <rect x="458" y="120" width="168" height="66" rx="18" fill="#dce9df"/>
-          <text x="542" y="162" text-anchor="middle" font-size="27" font-weight="700" fill="#27212b">HTML ✓</text>
-          <text x="466" y="231" font-size="26" fill="#665f68">origin · port</text>
-          <text x="466" y="270" font-size="26" fill="#665f68">process · PID</text>
-          <text x="466" y="309" font-size="26" fill="#665f68">context（若有）</text>
-          <text x="542" y="417" text-anchor="middle" font-size="26" fill="#a4604f">JSON / 非网页 ✕</text>
+          <desc id="filter-desc">多个回环端口先汇入 scan-ports 策略漏斗，再向下经过 HTTP 内容类型漏斗，最后只留下 HTML 服务及其元数据。</desc>
+          <rect x="16" y="24" width="150" height="64" rx="20" fill="#ebe2d5"/>
+          <rect x="178" y="24" width="150" height="64" rx="20" fill="#ebe2d5"/>
+          <rect x="340" y="24" width="150" height="64" rx="20" fill="#ebe2d5"/>
+          <rect x="502" y="24" width="150" height="64" rx="20" fill="#ebe2d5"/>
+          <text x="91" y="65" text-anchor="middle" font-size="26" fill="#27212b">回环端口 A</text>
+          <text x="253" y="65" text-anchor="middle" font-size="26" fill="#27212b">回环端口 B</text>
+          <text x="415" y="65" text-anchor="middle" font-size="26" fill="#27212b">回环端口 C</text>
+          <text x="577" y="65" text-anchor="middle" font-size="26" fill="#27212b">回环端口 D</text>
+          <path d="M91 88l174 52M253 88l67 52M415 88l-55 52M577 88l-162 52" fill="none" stroke="#a99f94" stroke-width="7" stroke-linecap="round"/>
+          <path d="M230 140h220l-50 110H280z" fill="#e8ddf2" stroke="#7650a8" stroke-width="5" stroke-linejoin="round"/>
+          <text x="340" y="184" text-anchor="middle" font-size="26" font-weight="700" fill="#513477">scan-ports</text>
+          <text x="340" y="220" text-anchor="middle" font-size="26" fill="#665f68">策略</text>
+          <path d="M340 250v35" stroke="#7650a8" stroke-width="8" stroke-linecap="round"/>
+          <path d="M323 268l17 18 17-18" fill="none" stroke="#7650a8" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M250 292h180l-40 116H290z" fill="#dce9df" stroke="#567963" stroke-width="5" stroke-linejoin="round"/>
+          <text x="340" y="337" text-anchor="middle" font-size="26" font-weight="700" fill="#27212b">HTTP 探测</text>
+          <text x="340" y="376" text-anchor="middle" font-size="26" fill="#665f68">Content-Type</text>
+          <path d="M340 408v38" stroke="#567963" stroke-width="8" stroke-linecap="round"/>
+          <path d="M323 429l17 18 17-18" fill="none" stroke="#567963" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="105" y="454" width="470" height="116" rx="29" fill="#fffaf2" stroke="#567963" stroke-width="6"/>
+          <rect x="128" y="478" width="140" height="68" rx="18" fill="#dce9df"/>
+          <text x="198" y="520" text-anchor="middle" font-size="27" font-weight="700" fill="#27212b">HTML ✓</text>
+          <text x="292" y="488" font-size="26" fill="#665f68">origin · port</text>
+          <text x="292" y="521" font-size="26" fill="#665f68">process · PID</text>
+          <text x="292" y="554" font-size="26" fill="#665f68">context（若有）</text>
+          <text x="340" y="608" text-anchor="middle" font-size="26" fill="#a4604f">JSON / 非网页 ✕</text>
         </svg>
         <figcaption>概念图：漏斗表示发现与过滤；可用时还会附带 origin、端口、进程、PID 与上下文。</figcaption>
       </figure>
@@ -239,7 +240,7 @@
       <figure>
         <svg role="img" aria-labelledby="card-title card-desc" viewBox="0 0 680 440">
           <title id="card-title">HTML 服务变成紫色 Browser Preview 卡片</title>
-          <desc id="card-desc">左侧是一条带元数据的 HTML 服务记录，箭头指向右侧手机上的紫色 Browser Preview 服务器卡片；磁盘文件柜在卡片范围外。</desc>
+          <desc id="card-desc">左侧是一条带元数据的 HTML 服务记录，箭头指向右侧手机上的紫色 Browser Preview 服务器卡片；下方虚线表示这不是任意磁盘访问。</desc>
           <rect x="37" y="75" width="244" height="279" rx="31" fill="#dce9df" stroke="#567963" stroke-width="5"/>
           <circle cx="85" cy="126" r="18" fill="#567963"/>
           <text x="122" y="136" font-size="30" font-weight="700" fill="#27212b">HTML server</text>
@@ -308,7 +309,7 @@
   <footer id="sources" data-sources>
     <h2>信息来源</h2>
     <ol>
-      <li>Moshi 文档《Usage》：<code>set scan-ports</code> 与 <code>servers</code> 命令说明，随本示例核对的本地文档版本。</li>
+      <li>Moshi 文档《Usage》：<code>set scan-ports</code> 与 <code>servers</code> 命令说明；本地文档版本 Moshi Hook 0.3.0，核对日期 2026-08-24。</li>
       <li>Moshi 文档《API Reference》第 5 节 “CLI JSON (SSH preflight)”：主机检查、HTML Content-Type 过滤、服务器元数据与上下文说明。</li>
       <li>同节 “Transport: same-port forwarding only”：同端口 SSH 本地转发、WebView 的 localhost 地址、无路径前缀反向代理及端口冲突报错边界。</li>
     </ol>
