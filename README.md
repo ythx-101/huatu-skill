@@ -59,7 +59,7 @@ python3 scripts/check_explainer.py explainer.html --check-only
 python3 scripts/check_explainer.py explainer.html --output-dir explainer-qa
 ```
 
-真实浏览器命令生成 `qa.json`、`preview-mobile.png` 和 `preview-desktop.png`。HTML 只允许内联 CSS/SVG；不允许 JavaScript、远程字体/CDN、分析代码、网络资源、凭据、私有标识或二维码。参见 `references/eli5-html-mode.md` 与可复现示例 `examples/eli5-moshi-hook.html`。
+真实浏览器命令生成 `qa.json`、`preview-mobile.png` 和 `preview-desktop.png`。HTML 只允许内联 CSS/SVG；不允许 JavaScript、远程字体/CDN、分析代码、网络资源、凭据、私有标识或二维码。参见 `references/eli5-html-mode.md`，以及可复现示例 `examples/eli5-moshi-hook.html` 和 `examples/eli5-moshi-browser-preview.html`。
 
 ## 轮播本地渲染
 

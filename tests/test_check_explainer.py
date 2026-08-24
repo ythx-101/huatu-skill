@@ -58,14 +58,17 @@ class StaticValidationTests(unittest.TestCase):
         self.assertTrue(facts["sourcesPresent"])
         self.assertTrue(facts["simplificationBoundaryPresent"])
 
-    def test_shipped_starter_and_example_pass_static_validation(self) -> None:
-        for relative_path in (
-            "assets/eli5-explainer-starter.html",
-            "examples/eli5-moshi-hook.html",
-        ):
+    def test_shipped_starter_and_examples_pass_static_validation(self) -> None:
+        shipped_files = {
+            "assets/eli5-explainer-starter.html": 3,
+            "examples/eli5-moshi-hook.html": 5,
+            "examples/eli5-moshi-browser-preview.html": 5,
+        }
+        for relative_path, expected_scenes in shipped_files.items():
             with self.subTest(path=relative_path):
-                errors, _ = checker.validate_html_file(SKILL_DIR / relative_path)
+                errors, facts = checker.validate_html_file(SKILL_DIR / relative_path)
                 self.assertEqual(errors, [])
+                self.assertEqual(facts["sceneCount"], expected_scenes)
 
     def test_remote_resource_is_rejected(self) -> None:
         html = valid_html().replace("</figure>", '<img src="https://example.com/a.png"></figure>', 1)

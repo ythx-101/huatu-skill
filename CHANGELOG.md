@@ -4,7 +4,7 @@
 
 ### 新增
 - 新增 ELI5 Visual Explainer 产品模式：3–7 幕、单幕单概念、自包含响应式 HTML，显式信息来源与简化边界。
-- 新增安全起始模板、Moshi Hook 中文示例与完整模式规范；保留原有轮播 JSON → HTML → PNG 行为。
+- 新增安全起始模板、Moshi Hook 中文示例、Moshi Browser Preview 五幕中文解释器与完整模式规范；保留原有轮播 JSON → HTML → PNG 行为。
 - 新增 `scripts/check_explainer.py`，静态拒绝脚本、远程/请求型资源、危险 URL、凭据与缺失语义结构。
 - 新增真实 Chromium 双视口验证（390×844、1365×768），输出 `qa.json` 与移动/桌面全页截图，并 fail-closed 检查外部请求、横向溢出、浏览器错误和小于 12px 的可见文本。
 - 新增解释器静态校验回归测试，包括有效产物、远程资源、脚本、语义缺失、私密内容和无浏览器预检。

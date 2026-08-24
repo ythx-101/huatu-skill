@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>紫色按钮不是魔法：Moshi 怎么找到并打开本地 HTML？</title>
+  <style>
+    :root {
+      --paper: #f5f0e7;
+      --paper-deep: #ebe2d5;
+      --card: #fffaf2;
+      --ink: #27212b;
+      --muted: #665f68;
+      --rule: #d9cfc2;
+      --purple: #7650a8;
+      --purple-dark: #513477;
+      --purple-soft: #e8ddf2;
+      --green: #567963;
+      --green-soft: #dce9df;
+      --clay: #a4604f;
+      --clay-soft: #f0ddd4;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--paper); color: var(--ink); }
+    body {
+      margin: 0;
+      font-family: ui-serif, "Songti SC", "STSong", Georgia, serif;
+      font-size: 17px;
+      line-height: 1.62;
+    }
+    header, main, footer { width: min(100% - 36px, 1160px); margin-inline: auto; }
+    header { padding: clamp(52px, 8vw, 104px) 0 clamp(30px, 5vw, 58px); }
+    .eyebrow, .step, .pill {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-weight: 750;
+      letter-spacing: .08em;
+    }
+    .eyebrow { color: var(--purple-dark); font-size: 14px; }
+    h1 {
+      max-width: 980px;
+      margin: 13px 0 18px;
+      font-size: clamp(42px, 7vw, 82px);
+      line-height: 1.05;
+      letter-spacing: -.045em;
+    }
+    .lede { max-width: 720px; margin: 0; color: var(--muted); font-size: clamp(18px, 2vw, 23px); }
+    .scene {
+      display: grid;
+      grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+      gap: clamp(30px, 6vw, 84px);
+      align-items: center;
+      min-height: min(760px, 88vh);
+      padding: clamp(58px, 8vw, 98px) 0;
+      border-top: 1px solid var(--rule);
+    }
+    .scene:nth-child(even) { grid-template-columns: minmax(0, 1.22fr) minmax(0, .78fr); }
+    .scene:nth-child(even) .scene-copy { order: 2; }
+    .scene:nth-child(even) figure { order: 1; }
+    .scene-copy { max-width: 430px; }
+    .step { display: block; margin-bottom: 14px; color: var(--purple-dark); font-size: 14px; }
+    h2 { margin: 0 0 17px; font-size: clamp(31px, 4.4vw, 52px); line-height: 1.13; letter-spacing: -.03em; }
+    .scene-copy p { margin: 0; color: var(--muted); font-size: clamp(17px, 1.55vw, 20px); }
+    .pill {
+      display: inline-block;
+      margin-top: 21px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--purple-soft);
+      color: var(--purple-dark);
+      font-size: 14px;
+      line-height: 1.35;
+      letter-spacing: .02em;
+    }
+    figure {
+      margin: 0;
+      padding: clamp(17px, 3vw, 34px);
+      border: 1px solid var(--rule);
+      border-radius: 30px;
+      background: var(--card);
+      box-shadow: 0 18px 44px rgba(66, 45, 76, .07);
+    }
+    svg { display: block; width: 100%; height: auto; }
+    figcaption { margin-top: 15px; color: var(--muted); font-size: 14px; }
+    .boundary {
+      margin: 44px 0 76px;
+      padding: clamp(23px, 4vw, 38px);
+      border: 1px solid #cbb9dc;
+      border-radius: 24px;
+      background: var(--purple-soft);
+    }
+    .boundary h2, footer h2 { margin: 0 0 9px; font-size: 24px; letter-spacing: -.01em; }
+    .boundary p { max-width: 900px; margin: 0; }
+    footer { padding: 38px 0 68px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 14px; }
+    footer ol { margin: 10px 0 0; padding-left: 22px; }
+    footer li + li { margin-top: 7px; }
+    code {
+      padding: .08em .35em;
+      border-radius: 5px;
+      background: rgba(81, 52, 119, .1);
+      color: var(--purple-dark);
+      font: 700 .88em/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    @media (max-width: 760px) {
+      header, main, footer { width: min(100% - 32px, 620px); }
+      header { padding: 26px 0 24px; }
+      h1 { margin-top: 9px; font-size: clamp(40px, 11.5vw, 50px); line-height: 1.04; }
+      .lede { font-size: 18px; line-height: 1.52; }
+      .scene { grid-template-columns: 1fr; min-height: auto; gap: 25px; padding: 58px 0; }
+      .scene:first-child { padding-top: 20px; }
+      .scene:nth-child(even) { grid-template-columns: 1fr; }
+      .scene:nth-child(even) .scene-copy { order: initial; }
+      .scene:nth-child(even) figure, .scene:nth-child(odd) figure { order: -1; }
+      .scene-copy { max-width: none; }
+      figure { padding: 16px; border-radius: 23px; }
+      .boundary { margin-bottom: 56px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">ELI5 · BROWSER PREVIEW</div>
+    <h1>紫色按钮不是魔法：Moshi 怎么找到并打开本地 HTML？</h1>
+    <p class="lede">先有一盏本地端口灯亮起，Moshi 才能把它变成手机里的预览入口。</p>
+  </header>
+
+  <main>
+    <section class="scene" data-scene="1">
+      <div class="scene-copy">
+        <span class="step">01 · 先开灯</span>
+        <h2>HTML 要先被本地服务器端出来</h2>
+        <p>Mac 上的应用或服务器必须已经监听一个符合条件的回环 HTTP 端口。Moshi 不会打开裸文件，也不会替你生成 HTML。</p>
+        <span class="pill">先有 server，后有 preview</span>
+      </div>
+      <figure>
+        <svg role="img" aria-labelledby="lamp-title lamp-desc" viewBox="0 0 680 430">
+          <title id="lamp-title">本地 HTML 服务器点亮端口灯</title>
+          <desc id="lamp-desc">一张 HTML 页面进入 Mac 内的本地服务器，随后一个回环端口指示灯亮起。</desc>
+          <rect x="47" y="74" width="210" height="270" rx="30" fill="#f0ddd4"/>
+          <path d="M94 117h116l30 31v153H94z" fill="#fffaf2" stroke="#a4604f" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M210 117v34h30" fill="none" stroke="#a4604f" stroke-width="6"/>
+          <text x="167" y="223" text-anchor="middle" font-size="31" font-weight="700" fill="#27212b">HTML</text>
+          <text x="152" y="385" text-anchor="middle" font-size="28" fill="#665f68">页面内容</text>
+          <path d="M274 209h69" stroke="#7650a8" stroke-width="9" stroke-linecap="round"/>
+          <path d="M326 188l23 21-23 21" fill="none" stroke="#7650a8" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="367" y="60" width="266" height="310" rx="42" fill="#e8ddf2" stroke="#513477" stroke-width="6"/>
+          <path d="M417 316V164c0-48 36-73 83-73s83 25 83 73v152" fill="none" stroke="#513477" stroke-width="16" stroke-linecap="round"/>
+          <rect x="414" y="157" width="172" height="96" rx="24" fill="#fffaf2"/>
+          <text x="500" y="197" text-anchor="middle" font-size="29" fill="#27212b">本地 server</text>
+          <text x="500" y="232" text-anchor="middle" font-size="26" fill="#665f68">回环 HTTP</text>
+          <circle cx="500" cy="306" r="42" fill="#567963"/>
+          <circle cx="500" cy="306" r="16" fill="#fffaf2"/>
+          <text x="500" y="407" text-anchor="middle" font-size="28" font-weight="700" fill="#513477">端口灯已亮</text>
+        </svg>
+        <figcaption>概念图：内容由已运行的本地服务提供，不是 Moshi 现场制作。</figcaption>
+      </figure>
+    </section>
+
+    <section class="scene" data-scene="2">
+      <div class="scene-copy">
+        <span class="step">02 · 手机发问</span>
+        <h2>手机通过 SSH preflight 问 Mac</h2>
+        <p>Moshi 客户端用 SSH exec / preflight 运行指定主机命令 <code>moshi-hook servers</code>。这是拉取式检查，不要求主机配对，也不需要 bearer token。</p>
+        <span class="pill">pull-only host inspection</span>
+      </div>
+      <figure>
+        <svg role="img" aria-labelledby="ask-title ask-desc" viewBox="0 0 680 430">
+          <title id="ask-title">手机通过 SSH preflight 询问 Mac</title>
+          <desc id="ask-desc">左侧手机把 moshi-hook servers 命令沿 SSH preflight 通道送到右侧 Mac。</desc>
+          <rect x="45" y="63" width="181" height="306" rx="38" fill="#27212b"/>
+          <rect x="65" y="94" width="141" height="221" rx="24" fill="#fffaf2"/>
+          <circle cx="136" cy="178" r="47" fill="#e8ddf2"/>
+          <path d="M112 177h48M145 158l20 19-20 19" fill="none" stroke="#513477" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="136" y="272" text-anchor="middle" font-size="28" fill="#27212b">Moshi</text>
+          <rect x="100" y="336" width="72" height="7" rx="4" fill="#fffaf2"/>
+          <path d="M238 213h160" stroke="#7650a8" stroke-width="10" stroke-linecap="round"/>
+          <path d="M378 191l25 22-25 22" fill="none" stroke="#7650a8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="236" y="130" width="169" height="58" rx="18" fill="#e8ddf2"/>
+          <text x="321" y="168" text-anchor="middle" font-size="26" font-weight="700" fill="#513477">SSH preflight</text>
+          <rect x="425" y="88" width="214" height="255" rx="31" fill="#dce9df" stroke="#567963" stroke-width="6"/>
+          <rect x="454" y="126" width="156" height="106" rx="20" fill="#27212b"/>
+          <text x="532" y="170" text-anchor="middle" font-size="26" fill="#fffaf2">moshi-hook</text>
+          <text x="532" y="206" text-anchor="middle" font-size="28" font-weight="700" fill="#e8ddf2">servers</text>
+          <path d="M478 273l18 18 37-44" fill="none" stroke="#567963" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="550" y="288" font-size="26" fill="#27212b">只读检查</text>
+          <text x="532" y="385" text-anchor="middle" font-size="28" fill="#665f68">Mac 主机</text>
+        </svg>
+        <figcaption>概念图：这里画的是一次主机检查请求，不展开 SSH 的线级消息。</figcaption>
+      </figure>
+    </section>
+
+    <section class="scene" data-scene="3">
+      <div class="scene-copy">
+        <span class="step">03 · 扫描与筛选</span>
+        <h2>很多监听者，只留下可展示网页</h2>
+        <p>命令发现符合 scan-ports 策略的回环监听者并逐个探测；只有返回 <code>text/html</code> 或 <code>application/xhtml+xml</code> 的服务会浮上来。</p>
+        <span class="pill">端口策略 → 探测 → HTML</span>
+      </div>
+      <figure>
+        <svg role="img" aria-labelledby="filter-title filter-desc" viewBox="0 0 680 470">
+          <title id="filter-title">监听端口经过策略和内容类型筛选</title>
+          <desc id="filter-desc">多个回环端口先经过 scan-ports 策略，再经过 HTTP 内容类型漏斗，最后只留下 HTML 服务及其元数据。</desc>
+          <rect x="32" y="54" width="165" height="72" rx="22" fill="#ebe2d5"/>
+          <rect x="32" y="148" width="165" height="72" rx="22" fill="#ebe2d5"/>
+          <rect x="32" y="242" width="165" height="72" rx="22" fill="#ebe2d5"/>
+          <rect x="32" y="336" width="165" height="72" rx="22" fill="#ebe2d5"/>
+          <text x="114" y="99" text-anchor="middle" font-size="27" fill="#27212b">回环端口 A</text>
+          <text x="114" y="193" text-anchor="middle" font-size="27" fill="#27212b">回环端口 B</text>
+          <text x="114" y="287" text-anchor="middle" font-size="27" fill="#27212b">回环端口 C</text>
+          <text x="114" y="381" text-anchor="middle" font-size="27" fill="#27212b">回环端口 D</text>
+          <path d="M206 90h68M206 184h68M206 278h68M206 372h68" stroke="#a99f94" stroke-width="7" stroke-linecap="round"/>
+          <path d="M277 61h135l-34 134h-67z" fill="#e8ddf2" stroke="#7650a8" stroke-width="5" stroke-linejoin="round"/>
+          <text x="344" y="105" text-anchor="middle" font-size="26" font-weight="700" fill="#513477">scan-ports</text>
+          <text x="344" y="141" text-anchor="middle" font-size="26" fill="#665f68">策略</text>
+          <path d="M344 195v43" stroke="#7650a8" stroke-width="8" stroke-linecap="round"/>
+          <path d="M283 238h122l-29 116h-64z" fill="#dce9df" stroke="#567963" stroke-width="5" stroke-linejoin="round"/>
+          <text x="344" y="278" text-anchor="middle" font-size="26" font-weight="700" fill="#27212b">HTTP 探测</text>
+          <text x="344" y="316" text-anchor="middle" font-size="26" fill="#665f68">Content-Type</text>
+          <path d="M344 354v48" stroke="#567963" stroke-width="8" stroke-linecap="round"/>
+          <path d="M325 384l19 20 19-20" fill="none" stroke="#567963" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="434" y="96" width="216" height="278" rx="31" fill="#fffaf2" stroke="#567963" stroke-width="6"/>
+          <rect x="458" y="120" width="168" height="66" rx="18" fill="#dce9df"/>
+          <text x="542" y="162" text-anchor="middle" font-size="27" font-weight="700" fill="#27212b">HTML ✓</text>
+          <text x="466" y="231" font-size="26" fill="#665f68">origin · port</text>
+          <text x="466" y="270" font-size="26" fill="#665f68">process · PID</text>
+          <text x="466" y="309" font-size="26" fill="#665f68">context（若有）</text>
+          <text x="542" y="417" text-anchor="middle" font-size="26" fill="#a4604f">JSON / 非网页 ✕</text>
+        </svg>
+        <figcaption>概念图：漏斗表示发现与过滤；可用时还会附带 origin、端口、进程、PID 与上下文。</figcaption>
+      </figure>
+    </section>
+
+    <section class="scene" data-scene="4">
+      <div class="scene-copy">
+        <span class="step">04 · 变成入口</span>
+        <h2>紫色按钮，其实是一张服务器卡片</h2>
+        <p>通过筛选的 web server 被呈现为 Browser Preview 入口。它代表“这里有一个可打开的服务器”，不是让手机任意翻看 Mac 磁盘。</p>
+        <span class="pill">surfaced server ≠ disk browser</span>
+      </div>
+      <figure>
+        <svg role="img" aria-labelledby="card-title card-desc" viewBox="0 0 680 440">
+          <title id="card-title">HTML 服务变成紫色 Browser Preview 卡片</title>
+          <desc id="card-desc">左侧是一条带元数据的 HTML 服务记录，箭头指向右侧手机上的紫色 Browser Preview 服务器卡片；磁盘文件柜在卡片范围外。</desc>
+          <rect x="37" y="75" width="244" height="279" rx="31" fill="#dce9df" stroke="#567963" stroke-width="5"/>
+          <circle cx="85" cy="126" r="18" fill="#567963"/>
+          <text x="122" y="136" font-size="30" font-weight="700" fill="#27212b">HTML server</text>
+          <path d="M69 178h180M69 222h180M69 266h132" stroke="#9bafa0" stroke-width="12" stroke-linecap="round"/>
+          <text x="69" y="320" font-size="26" fill="#665f68">origin · port · process</text>
+          <path d="M297 214h74" stroke="#7650a8" stroke-width="9" stroke-linecap="round"/>
+          <path d="M350 193l24 21-24 21" fill="none" stroke="#7650a8" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="390" y="45" width="246" height="350" rx="43" fill="#27212b"/>
+          <rect x="415" y="79" width="196" height="264" rx="27" fill="#fffaf2"/>
+          <rect x="435" y="112" width="156" height="164" rx="26" fill="#7650a8"/>
+          <rect x="459" y="137" width="108" height="76" rx="16" fill="#fffaf2"/>
+          <path d="M475 158h76M475 177h55M475 196h67" stroke="#cbb9dc" stroke-width="8" stroke-linecap="round"/>
+          <text x="513" y="248" text-anchor="middle" font-size="26" font-weight="700" fill="#fffaf2">Browser Preview</text>
+          <rect x="478" y="363" width="70" height="7" rx="4" fill="#fffaf2"/>
+          <path d="M47 394h220" stroke="#a4604f" stroke-width="6" stroke-dasharray="10 10"/>
+          <text x="157" y="426" text-anchor="middle" font-size="26" fill="#a4604f">不是任意磁盘访问</text>
+        </svg>
+        <figcaption>概念图：紫色入口来自被发现的服务器记录，而不是某个裸 HTML 文件路径。</figcaption>
+      </figure>
+    </section>
+
+    <section class="scene" data-scene="5">
+      <div class="scene-copy">
+        <span class="step">05 · 点击后过隧道</span>
+        <h2>同一个端口，从 Mac 接到 iPhone</h2>
+        <p>点击后，客户端建立同端口 SSH 本地转发：<code>phone:&lt;port&gt; → host:&lt;port&gt;</code>，再让 WebView 加载 <code>http://localhost:&lt;port&gt;</code>。</p>
+        <span class="pill">same port · no URL rewrite</span>
+      </div>
+      <figure>
+        <svg role="img" aria-labelledby="tunnel-title tunnel-desc" viewBox="0 0 680 470">
+          <title id="tunnel-title">同端口 SSH 本地转发把网页接入 iPhone WebView</title>
+          <desc id="tunnel-desc">Mac 的本地服务端口通过 SSH 隧道连接到手机同号端口，手机 WebView 打开 localhost；外围防护圈表示服务没有因此发布到局域网或互联网。</desc>
+          <rect x="35" y="91" width="190" height="278" rx="35" fill="#dce9df" stroke="#567963" stroke-width="6"/>
+          <text x="130" y="143" text-anchor="middle" font-size="29" font-weight="700" fill="#27212b">Mac</text>
+          <rect x="64" y="179" width="132" height="95" rx="22" fill="#fffaf2"/>
+          <text x="130" y="219" text-anchor="middle" font-size="26" fill="#27212b">local server</text>
+          <text x="130" y="253" text-anchor="middle" font-size="27" font-weight="700" fill="#567963">:&lt;port&gt;</text>
+          <text x="130" y="330" text-anchor="middle" font-size="26" fill="#665f68">仅回环监听</text>
+          <path d="M225 227h225" stroke="#cbb9dc" stroke-width="42" stroke-linecap="round"/>
+          <path d="M225 227h225" stroke="#7650a8" stroke-width="10" stroke-linecap="round"/>
+          <path d="M426 204l26 23-26 23" fill="none" stroke="#7650a8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="254" y="135" width="168" height="54" rx="18" fill="#513477"/>
+          <text x="338" y="170" text-anchor="middle" font-size="26" font-weight="700" fill="#fffaf2">SSH 本地转发</text>
+          <text x="338" y="293" text-anchor="middle" font-size="26" font-weight="700" fill="#513477">同号端口</text>
+          <rect x="452" y="53" width="193" height="364" rx="42" fill="#27212b"/>
+          <rect x="474" y="87" width="149" height="270" rx="25" fill="#fffaf2"/>
+          <rect x="490" y="112" width="117" height="43" rx="13" fill="#e8ddf2"/>
+          <text x="548" y="140" text-anchor="middle" font-size="26" font-weight="700" fill="#513477">localhost:&lt;port&gt;</text>
+          <rect x="490" y="177" width="117" height="119" rx="18" fill="#7650a8"/>
+          <text x="548" y="229" text-anchor="middle" font-size="27" font-weight="700" fill="#fffaf2">WebView</text>
+          <text x="548" y="267" text-anchor="middle" font-size="26" fill="#e8ddf2">网页出现</text>
+          <rect x="516" y="380" width="65" height="7" rx="4" fill="#fffaf2"/>
+          <path d="M24 43h632v389H24z" fill="none" stroke="#a4604f" stroke-width="4" stroke-dasharray="12 12" rx="40"/>
+          <text x="340" y="458" text-anchor="middle" font-size="26" fill="#a4604f">不会因此发布到 LAN / Internet</text>
+        </svg>
+        <figcaption>概念图：没有路径前缀反向代理；手机端口若冲突，应显示错误，不改写 URL 兜底。</figcaption>
+      </figure>
+    </section>
+
+    <aside class="boundary" id="simplification" data-simplification>
+      <h2>简化边界</h2>
+      <p>以上五幅都是概念图，不是线级协议规范。箭头只表示“发现、呈现、转发”的责任与方向；省略了监听器枚举方式、探测时序、SSH 握手、WebView 生命周期、容器归属解析和错误 UI。图中不承诺发现每个服务、实时刷新、端口冲突自动恢复，也不表示服务被开放给局域网或互联网。</p>
+    </aside>
+  </main>
+
+  <footer id="sources" data-sources>
+    <h2>信息来源</h2>
+    <ol>
+      <li>Moshi 文档《Usage》：<code>set scan-ports</code> 与 <code>servers</code> 命令说明，随本示例核对的本地文档版本。</li>
+      <li>Moshi 文档《API Reference》第 5 节 “CLI JSON (SSH preflight)”：主机检查、HTML Content-Type 过滤、服务器元数据与上下文说明。</li>
+      <li>同节 “Transport: same-port forwarding only”：同端口 SSH 本地转发、WebView 的 localhost 地址、无路径前缀反向代理及端口冲突报错边界。</li>
+    </ol>
+  </footer>
+</body>
+</html>
